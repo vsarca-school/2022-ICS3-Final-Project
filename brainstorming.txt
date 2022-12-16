@@ -9,4 +9,5 @@ Flaws with making a new programming language
 
 IDEA 2: CHESS COMPUTER
 Flaws with idea:
-    - Don't get the 2% bonus
+    - Don't get the 2% bonus, unless we can come up with a way it helps computer science teachers?
+        - Only if we have some kind of learning aspect together with it
