@@ -1,6 +1,12 @@
+IDEA 1: PROGRAMMING LANGUAGE
 Flaws with processing:
 - Hard to make things look good
 - Only shapes and things, image and other support is limited
 Flaws with making a new programming language
 - We just parse the thing as javascript, replace drawing commands with canvas commands, and maybe replace syntax
     - Why is this a flaw? Too simple ot execute (I can make this in <1 class)
+    - We cant make this a difficult project, its just not possible, its too easy with javascript
+
+IDEA 2: CHESS COMPUTER
+Flaws with idea:
+    - Don't get the 2% bonus
