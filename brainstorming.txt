@@ -11,3 +11,13 @@ IDEA 2: CHESS COMPUTER
 Flaws with idea:
     - Don't get the 2% bonus, unless we can come up with a way it helps computer science teachers?
         - Only if we have some kind of learning aspect together with it
+
+IDEA 3: AI PROGRAMMING LANGUAGE
+Matlab is a language used for its really fast matrix multiplication
+Why don't we make a language for simpler AI creation?
+- Neural network specific
+Pros:
+- For computer science, so gets 2%
+- Decent workload (I'll do the AI part dw guys)
+Cons:
+- Idk what to put here tbh, this idea is golden
