@@ -1,9 +1,17 @@
-class NeuralNetwork
-{
-  constructor(layer1, layer2, ...args)
-  {
-    ;
-  }
+
+class NeuralNetwork {
+    constructor(layer1, layer2, ...otherLayers) {
+        this.layersizes = [layer1, layer2] ; // otherLayers;
+        console.log(this.layersizes);
+        this.number_of_layers = 2 + otherLayers.length;
+        this.layers = [];
+        this.layers.push(new Array(layer1));
+        this.layers.push(new Array(layer2));
+        for (let size in otherLayers)
+        {
+            this.layers.push(new Array(size));
+        }
+    }
 }
 
 /*class NeuralNetwork {
