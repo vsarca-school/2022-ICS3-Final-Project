@@ -9,17 +9,11 @@ class NeuralNetwork {
             for (let j=0; j<this.layersizes[i]; j++)
             {
                 this.layerlines[i][j] = Array(this.layersizes[i+1]);
+                for (let k=0; k<this.layersizes[i+1]; k++)
+                {
+                    this.layerlines[i][j][k] = [Math.random(), Math.random()];
+                }
             }
-        }
-
-        // below is bad code
-        this.number_of_layers = 2 + otherLayers.length;
-        this.layers = [];
-        this.layers.push(new Array(layer1));
-        this.layers.push(new Array(layer2));
-        for (let size in otherLayers)
-        {
-            this.layers.push(new Array(size));
         }
     }
 }
