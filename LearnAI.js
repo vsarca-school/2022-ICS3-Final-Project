@@ -2,8 +2,17 @@
 class NeuralNetwork {
     constructor(layer1, layer2, ...otherLayers) {
         this.layersizes = [layer1, layer2].concat(otherLayers);
-        this.layerlines = []
-        for (let i=0; i<this.layersizes.length; i++)
+        this.layerlines = Array(this.layersizes.length-1);
+        for (let i=0; i<this.layerlines.length; i++)
+        {
+            this.layerlines[i] = Array(this.layersizes[i]);
+            for (let j=0; j<this.layersizes[i]; j++)
+            {
+                this.layerlines[i][j] = Array(this.layersizes[i+1]);
+            }
+        }
+
+        // below is bad code
         this.number_of_layers = 2 + otherLayers.length;
         this.layers = [];
         this.layers.push(new Array(layer1));
