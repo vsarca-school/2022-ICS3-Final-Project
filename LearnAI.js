@@ -15,6 +15,7 @@ class NeuralNetwork {
                 }
             }
         }
+        // Random weights and biases now
     }
 }
 
