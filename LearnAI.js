@@ -1,8 +1,9 @@
 
 class NeuralNetwork {
     constructor(layer1, layer2, ...otherLayers) {
-        this.layersizes = [layer1, layer2] ; // otherLayers;
-        console.log(this.layersizes);
+        this.layersizes = [layer1, layer2].concat(otherLayers);
+        this.layerlines = []
+        for (let i=0; i<this.layersizes.length; i++)
         this.number_of_layers = 2 + otherLayers.length;
         this.layers = [];
         this.layers.push(new Array(layer1));
