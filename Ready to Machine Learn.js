@@ -1,4 +1,6 @@
-class NeuralNetwork {
+
+
+/*class NeuralNetwork {
     constructor(inputSize, hiddenSize, outputSize) {
       // Initialize weights and biases for input-to-hidden and hidden-to-output layers
       this.weightsIH = new Matrix(hiddenSize, inputSize);
@@ -92,4 +94,4 @@ class NeuralNetwork {
     // Adjust biases by gradient
     this.biasH.add(hiddenGradient);
   }
-}
+}*/
