@@ -1,4 +1,10 @@
-
+class NeuralNetwork
+{
+  constructor(layer1, layer2, ...args)
+  {
+    ;
+  }
+}
 
 /*class NeuralNetwork {
     constructor(inputSize, hiddenSize, outputSize) {
