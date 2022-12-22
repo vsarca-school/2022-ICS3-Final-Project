@@ -20,15 +20,14 @@ class NeuralNetwork {
         }
         // Layer computation functions
         this.layercomputers = Array(this.layersizes.length - 1);
-        for (let i=0; i< this.layercomputers.length; i++)
-        {
-            this.layercomputers[i] = gpu.createKernel(function(input, b, w) { // inputs, biases, weights
+        for (let i = 0; i < this.layercomputers.length; i++) {
+            this.layercomputers[i] = eval(`gpu.createKernel(function(input, b, w) { // inputs, biases, weights
                 let sum = b[this.thread.x];
-                for (let i = 0; i < this.layersizes[i]; i++) {
+                for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += input[i]*w[i][this.thread.x];
                 }
                 return sum;
-            }).setOutput([this.layersizes[i+1]]);
+            })`).setOutput([this.layersizes[i + 1]]);
         }
     }
     randomize() { // Random weights and biases
@@ -62,7 +61,7 @@ class NeuralNetwork {
         let error = output - expected;
         return error * error;
     }
-    colculateCost(data, targets) { // Takes an array of inputs and outputs and finds the ocst of the neural network
+    calculateCost(data, targets) { // Takes an array of inputs and outputs and finds the ocst of the neural network
         let cost = 0.0;
         // Cost is difference between expected output and actual output
         let output = this.runNetwork(data);
@@ -71,13 +70,13 @@ class NeuralNetwork {
         }
     }
 
-    runNetwork(data)
-    {
+    runNetwork(data) {
         let currentLayer = data;
-        for (let i=0; i<this.layercomputers.length; i++)
-        {
+        for (let i = 0; i < this.layercomputers.length; i++) {
+            console.log(this.layercomputers[i]);
             currentLayer = this.layercomputers[i](data, this.layerbiases[i], this.layerweights[i]);
         }
+        return currentLayer;
     }
 }
 

@@ -21,7 +21,8 @@
 
     <script src="LearnAI.js"></script>
     <script>
-        n = new NeuralNetwork(768, 100, 10).randomize();
+        n = new NeuralNetwork(2, 3, 2).randomize();
+        console.log(n.calculateCost([0,1], [1,0]));
     </script>
 </head>
 
