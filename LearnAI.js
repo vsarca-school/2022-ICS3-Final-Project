@@ -4,7 +4,7 @@ class NeuralNetwork {
         this.layersizes = [layer1, layer2].concat(otherLayers);
         this.layerbiases = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerbiases.length; i++) {
-            this.layerbiases[i] = Array(this.layersizes[i]);
+            this.layerbiases[i] = Array(this.layersizes[i+1]);
         }
         this.layerweights = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerweights.length; i++) {
@@ -16,7 +16,7 @@ class NeuralNetwork {
     }
     randomize() { // Random weights and biases
         for (let i = 0; i < this.layerbiases.length; i++) {
-            for (let j = 0; j < this.layersizes[i]; j++) {
+            for (let j = 0; j < this.layersizes[i+1]; j++) {
                 this.layerbiases[i][j] = Math.random();
             }
         }
@@ -34,8 +34,18 @@ class NeuralNetwork {
         //let layersizes = file.
     }
 
-    cost(target) {
-        return DeepTrainer.sigmoid(run);
+    calculateCost(target) {
+        let cost = 0.0;
+        if (isArray(target))
+        {
+            for (let item in target)
+            {
+                cost += calculateCost(item);
+            }
+            return cost;
+        }
+
+        
     }
 }
 
@@ -44,7 +54,6 @@ class DeepTrainer {
     static sigmoid(x) {
         return 1 / (1 + Math.exp(-x));
     }
-
     // Derivative of activation function
     static dSigmoid(y) {
         return y * (1 - y);
