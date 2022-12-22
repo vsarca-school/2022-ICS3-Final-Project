@@ -1,14 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+
+<head>
     <script>
-        let title = document.getElementById("title");
+        let title;
+        document.onload = function () {
+            document.getElementById("title");
+        }
         let callback = setTimeout(function () {
-            title.style.textShadow = parseInt(Math.random()*5)+"px "+parseInt(Math.random()*5)+"px";
+            title.style.textShadow = parseInt(Math.random() * 5) + "px " + parseInt(Math.random() * 5) + "px";
         }, 100);
     </script>
-    <body>
-        <pre id="title">
+</head>
+
+<body>
+    <pre id="title">
             __                         _     _____  _
            / /  ___  __ _ _ __ _ __   /_\    \_   \(_)___
           / /  / _ \/ _` | '__| '_ \ //_\\    / /\/| / __|
@@ -16,5 +23,6 @@
          \____/\___|\__,_|_|  |_| |_\_/ \_/\____(_)/ |___/
                                                  |__/
          </pre>
-    </body>  
+</body>
+
 </html>
