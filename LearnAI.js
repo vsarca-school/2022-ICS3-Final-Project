@@ -1,11 +1,16 @@
 
 class NeuralNetwork {
+    gpu = new GPU();
+
     constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
+        // Layer sizes
         this.layersizes = [layer1, layer2].concat(otherLayers);
+        // Layer biases
         this.layerbiases = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerbiases.length; i++) {
-            this.layerbiases[i] = Array(this.layersizes[i+1]);
+            this.layerbiases[i] = Array(this.layersizes[i + 1]);
         }
+        // Layer weights
         this.layerweights = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerweights.length; i++) {
             this.layerweights[i] = Array(this.layersizes[i]);
@@ -13,10 +18,22 @@ class NeuralNetwork {
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
         }
+        // Layer computation functions
+        this.layercomputers = Array(this.layersizes.length - 1);
+        for (let i=0; i< this.layercomputers.length; i++)
+        {
+            this.layercomputers[i] = gpu.createKernel(function(input, b, w) { // inputs, biases, weights
+                let sum = b[this.thread.x];
+                for (let i = 0; i < this.layersizes[i]; i++) {
+                    sum += input[i]*w[i][this.thread.x];
+                }
+                return sum;
+            }).setOutput([this.layersizes[i+1]]);
+        }
     }
     randomize() { // Random weights and biases
         for (let i = 0; i < this.layerbiases.length; i++) {
-            for (let j = 0; j < this.layersizes[i+1]; j++) {
+            for (let j = 0; j < this.layersizes[i + 1]; j++) {
                 this.layerbiases[i][j] = Math.random();
             }
         }
@@ -30,7 +47,7 @@ class NeuralNetwork {
         return this;
     }
     static fromFile(file) { // Loads AI from file, TODO
-        let n = NeuralNetwork(1,1); // We are deleting the network anyways, so make it really really small
+        let n = NeuralNetwork(1, 1); // We are deleting the network anyways, so make it really really small
         //let layersizes = file.
         return n;
     }
@@ -41,18 +58,26 @@ class NeuralNetwork {
         console.log("Layerweights:", this.layerweights);
     }
 
-    calculateCost(target) {
+    nodeCost(output, expected) {
+        let error = output - expected;
+        return error * error;
+    }
+    colculateCost(data, targets) { // Takes an array of inputs and outputs and finds the ocst of the neural network
         let cost = 0.0;
-        if (isArray(target))
-        {
-            for (let item in target)
-            {
-                cost += calculateCost(item);
-            }
-            return cost;
+        // Cost is difference between expected output and actual output
+        let output = this.runNetwork(data);
+        for (let i = 0; i < output.length; i++) {
+            cost += this.nodeCost(output[i], targets[i]);
         }
+    }
 
-
+    runNetwork(data)
+    {
+        let currentLayer = data;
+        for (let i=0; i<this.layercomputers.length; i++)
+        {
+            currentLayer = this.layercomputers[i](data, this.layerbiases[i], this.layerweights[i]);
+        }
     }
 }
 
