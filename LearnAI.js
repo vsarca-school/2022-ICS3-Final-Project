@@ -1,18 +1,38 @@
 
 class NeuralNetwork {
-    constructor(layer1, layer2, ...otherLayers) {
+    constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
         this.layersizes = [layer1, layer2].concat(otherLayers);
-        this.layerlines = Array(this.layersizes.length - 1);
-        for (let i = 0; i < this.layerlines.length; i++) {
-            this.layerlines[i] = Array(this.layersizes[i]);
+        this.layerbiases = Array(this.layersizes.length - 1);
+        for (let i=0; i < this.layerbiases.length; i++)
+        {
+            this.layerbiases[i] = Array(this.layersizes[i]);
+        }
+        this.layerweights = Array(this.layersizes.length - 1);
+        for (let i = 0; i < this.layerweights.length; i++) {
+            this.layerweights[i] = Array(this.layersizes[i]);
             for (let j = 0; j < this.layersizes[i]; j++) {
-                this.layerlines[i][j] = Array(this.layersizes[i + 1]);
+                this.layerweights[i][j] = Array(this.layersizes[i + 1]);
+            }
+        }
+    }
+    randomize() { // Random weights and biases
+        for (let i=0; i < this.layerbiases.length; i++)
+        {
+            for (let j=0; j < this.layersizes[i]; j++)
+            {
+                this.layerbiases
+            }
+        }
+        for (let i = 0; i < this.layerweights.length; i++) {
+            for (let j = 0; j < this.layersizes[i]; j++) {
                 for (let k = 0; k < this.layersizes[i + 1]; k++) {
-                    this.layerlines[i][j][k] = [Math.random(), Math.random()];
+                    this.layerweights[i][j][k] = Math.random();
                 }
             }
         }
-        // Random weights and biases now
+    }
+    from() {
+        ;
     }
 
     cost (target) {
