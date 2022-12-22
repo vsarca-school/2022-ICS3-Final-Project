@@ -27,8 +27,9 @@ class NeuralNetwork {
                 }
             }
         }
+        return this;
     }
-    from(file) {
+    static fromFile(file) { // Loads AI from file
         ;
     }
 
