@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 <html>
     <link rel="stylesheet" href="style.css">
+    <script>
+        let title = document.getElementById("title");
+        let callback = setTimeout(function () {
+            title.style.textShadow = parseInt(Math.random()*5)+"px "+parseInt(Math.random()*5)+"px";
+        }, 100);
+    </script>
     <body>
         <pre id="title">
             __                         _     _____  _
