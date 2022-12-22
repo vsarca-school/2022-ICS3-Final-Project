@@ -3,8 +3,7 @@ class NeuralNetwork {
     constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
         this.layersizes = [layer1, layer2].concat(otherLayers);
         this.layerbiases = Array(this.layersizes.length - 1);
-        for (let i=0; i < this.layerbiases.length; i++)
-        {
+        for (let i = 0; i < this.layerbiases.length; i++) {
             this.layerbiases[i] = Array(this.layersizes[i]);
         }
         this.layerweights = Array(this.layersizes.length - 1);
@@ -16,11 +15,9 @@ class NeuralNetwork {
         }
     }
     randomize() { // Random weights and biases
-        for (let i=0; i < this.layerbiases.length; i++)
-        {
-            for (let j=0; j < this.layersizes[i]; j++)
-            {
-                this.layerbiases
+        for (let i = 0; i < this.layerbiases.length; i++) {
+            for (let j = 0; j < this.layersizes[i]; j++) {
+                this.layerbiases[i][j] = Math.random();
             }
         }
         for (let i = 0; i < this.layerweights.length; i++) {
@@ -31,11 +28,11 @@ class NeuralNetwork {
             }
         }
     }
-    from() {
+    from(file) {
         ;
     }
 
-    cost (target) {
+    cost(target) {
         return DeepTrainer.sigmoid(run);
     }
 }
