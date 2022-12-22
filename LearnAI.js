@@ -32,6 +32,13 @@ class NeuralNetwork {
     static fromFile(file) { // Loads AI from file, TODO
         let n = NeuralNetwork(1,1); // We are deleting the network anyways, so make it really really small
         //let layersizes = file.
+        return n;
+    }
+
+    print() {
+        console.log("Layersizes:", this.layersizes);
+        console.log("Layerbiases:", this.layerbiases);
+        console.log("Layerweights:", this.layerweights);
     }
 
     calculateCost(target) {
@@ -45,7 +52,7 @@ class NeuralNetwork {
             return cost;
         }
 
-        
+
     }
 }
 
