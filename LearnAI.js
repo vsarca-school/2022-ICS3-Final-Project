@@ -29,8 +29,9 @@ class NeuralNetwork {
         }
         return this;
     }
-    static fromFile(file) { // Loads AI from file
-        ;
+    static fromFile(file) { // Loads AI from file, TODO
+        let n = NeuralNetwork(1,1); // We are deleting the network anyways, so make it really really small
+        //let layersizes = file.
     }
 
     cost(target) {
