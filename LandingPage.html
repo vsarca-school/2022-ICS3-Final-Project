@@ -5,12 +5,12 @@
 <head>
     <script>
         let title;
-        document.onload = function () {
-            document.getElementById("title");
+        window.onload = function () {
+            title = document.getElementById("title");
         }
-        let callback = setTimeout(function () {
-            title.style.textShadow = parseInt(Math.random() * 5) + "px " + parseInt(Math.random() * 5) + "px";
-        }, 100);
+        let callback = setInterval(function () {
+            title.style.textShadow = parseInt(2 + Math.random() * 4) + "px " + parseInt(2 + Math.random() * 2) + "px #d2f898";
+        }, 75);
     </script>
 </head>
 
