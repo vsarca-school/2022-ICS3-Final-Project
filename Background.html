@@ -1,0 +1,25 @@
+<html><body>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <p><canvas id="canvasId" width="800" height="600" style="border: 1px solid black;"></canvas>
+    <script>
+    canvas = document.getElementById("canvasId");
+    if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
+    let intervalID;
+    let x = 100; let y = 100; let vx = 5; let vy = 10; let radius = 40;
+    document.getElementById("start").onclick = function() {intervalID = setInterval(draw, 10);};
+    document.getElementById("stop").onclick = function() {clearInterval(intervalID);};
+    function draw()
+    {
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        //ctx.fillStyle = `rgb(255,255,255,0.2)`;
+        ctx.fillRect(0, 0, canvas.width,canvas.height);
+        ctx.fillStyle = "red";
+        ctx.arc(x, y, 50, 0, 2 * Math.PI);
+        ctx.fill();
+        x += vx; y += vy;
+        if (x >= canvas.width-radius || x <= radius ) vx = - vx;
+        if (y >= canvas.height-radius || y <= radius ) vy = -vy;
+    }
+</script></body></html>
