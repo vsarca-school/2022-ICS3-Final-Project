@@ -44,17 +44,29 @@
 
     <script src="LearnAI.js"></script>
     <script>
+        // We will eventually get our digits from here: https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
         dataset = [[], []];
         for (let i=0; i<1000; i++)
         {
-            
+            let x = Math.random();
+            let y = Math.random();
+            dataset[0].push([x,y]);
+            if (x*x + y*y < 10)
+            {
+                dataset[1].push([1,0]); //safe
+            }
+            else
+            {
+                dataset[1].push([0,1]); // poisonous
+            }
         }
 
         n = new NeuralNetwork(2, 3, 2).randomize();
         n.print();
         
-        t = new DeepTrainer();
-        t.train(n, dataset);
+        t = new DeepTrainer(n, dataset, DeepTrainer.defaultSettings);
+        t.trainOnce();
+        t.trainOnce();
     </script>
 </head>
 
