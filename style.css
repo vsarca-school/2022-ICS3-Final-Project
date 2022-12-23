@@ -1,15 +1,60 @@
+@font-face {
+    font-family: 'Fester';
+    src: url(Fester_Trial-Book.woff);
+}
+
 body {
     background-color: #000000;
 }
 
+#titleBox {
+    text-align: center;
+    margin: auto;
+    width: 60%;
+    height: 40%;
+    position: absolute;
+    top: 0;
+    bottom: 15%;
+    left: 0;
+    right: 0;
+}
+
+#heading {
+    margin-top: -3vw;
+    font-family: 'Fester';
+    color: #fcfcfc;
+    font-size: 2vw;
+    font-weight: bold;
+    text-align: center;
+}
 
 #title {
-    color: #f6f930;
-    text-shadow: 3px 3px #00FF00;
-    font-size: 36px;
+    margin: auto;
+    color: #ecdf1f;
+    text-shadow: 0.6vw 0.6vw #4ebeda;
+    font-size: 2vw;
     font-weight: bold;
 }
 
+#button {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    border: none;
+    width: 15%;
+    height: 15%;
+    border-radius: 1vw;
+    color: #fcfcfc;
+    background-color: #3c87c4;
+    box-shadow: 0 0 10px #4ea6ee;
+    transition-duration: 0.5s;
+}
+
+#button:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
 /* CSS HEX
 --prussian-blue: #0b3954ff;
 --magnolia: #ece5f0ff;
