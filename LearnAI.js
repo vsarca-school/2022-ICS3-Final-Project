@@ -26,11 +26,12 @@ class NeuralNetwork {
         this.layercomputers = [];
         for (let i = 0; i < this.layerbiases.length; i++) {
             this.layercomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
+                function ${NeuralNetwork.sigmoid}
                 let sum = biases[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += inputs[i]*weights[i][this.thread.x];
                 }
-                return sum;
+                return sigmoid(sum);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
     }
@@ -81,9 +82,6 @@ I hope I remember to fill this in before we submit the final copy!`);
         }
         return currentLayer;
     }
-}
-
-class DeepTrainer {
     // Activation function
     static sigmoid(x) {
         return 1 / (1 + Math.exp(-x));
@@ -91,6 +89,23 @@ class DeepTrainer {
     // Derivative of activation function
     static dSigmoid(y) {
         return y * (1 - y);
+    }
+}
+
+class DeepTrainer {
+    constructor () {}
+
+    // Activation function
+    static sigmoid(x) {
+        return 1 / (1 + Math.exp(-x));
+    }
+    // Derivative of activation function
+    static dSigmoid(y) {
+        return y * (1 - y);
+    }
+
+    train(n, dataset) {
+        ;
     }
 }
 
