@@ -1,8 +1,12 @@
 
-class NeuralNetwork {
-    gpu = new GPU();
+/*const layercomputers = eval(`gpu.createKernel(function(a) {
+                return a[this.thread.x];
+            }).setOutput([10]);`);*/
 
+class NeuralNetwork {
     constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
+        //Gpu.js
+        this.gpu = new GPU();
         // Layer sizes
         this.layersizes = [layer1, layer2].concat(otherLayers);
         // Layer biases
@@ -18,16 +22,16 @@ class NeuralNetwork {
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
         }
-        // Layer computation functions
-        this.layercomputers = Array(this.layersizes.length - 1);
-        for (let i = 0; i < this.layercomputers.length; i++) {
-            this.layercomputers[i] = eval(`gpu.createKernel(function(input, b, w) { // inputs, biases, weights
-                let sum = b[this.thread.x];
+        // Layer computation functions (Note to self: if you print this array, everythign will magically stop working)
+        this.layercomputers = [];
+        for (let i = 0; i < this.layerbiases.length; i++) {
+            this.layercomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
+                let sum = biases[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
-                    sum += input[i]*w[i][this.thread.x];
+                    sum += inputs[i]*weights[i][this.thread.x];
                 }
                 return sum;
-            })`).setOutput([this.layersizes[i + 1]]);
+            }).setOutput([${this.layersizes[i + 1]}])`));
         }
     }
     randomize() { // Random weights and biases
@@ -51,29 +55,28 @@ class NeuralNetwork {
         return n;
     }
 
-    print() {
-        console.log("Layersizes:", this.layersizes);
-        console.log("Layerbiases:", this.layerbiases);
-        console.log("Layerweights:", this.layerweights);
+    print() { // Use console.log to print the contents of the class, this function explains the class so people can understand it
+        console.log(`This is a placeholder description of the NeuralNetworks class
+I hope I remember to fill this in before we submit the final copy!`);
     }
 
     nodeCost(output, expected) {
         let error = output - expected;
         return error * error;
     }
-    calculateCost(data, targets) { // Takes an array of inputs and outputs and finds the ocst of the neural network
+    calculateCost(data, targets) { // Takes an array of inputs and outputs and finds the cost of the neural network
         let cost = 0.0;
         // Cost is difference between expected output and actual output
         let output = this.runNetwork(data);
         for (let i = 0; i < output.length; i++) {
             cost += this.nodeCost(output[i], targets[i]);
         }
+        return cost;
     }
 
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            console.log(this.layercomputers[i]);
             currentLayer = this.layercomputers[i](data, this.layerbiases[i], this.layerweights[i]);
         }
         return currentLayer;

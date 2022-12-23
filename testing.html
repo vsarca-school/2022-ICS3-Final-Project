@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title>ICS Final Project</title>
+    <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
+    <script>
+        // GPU is a constructor and namespace for browser
+        /*
+        const generateMatrices = () => {
+            const matrices = [[], []]
+            for (let y = 0; y < 512; y++){
+            matrices[0].push([])
+            matrices[1].push([])
+            for (let x = 0; x < 512; x++){
+                matrices[0][y].push(Math.random())
+                matrices[1][y].push(Math.random())
+            }
+            }
+            return matrices
+        }
+
+        
+        class thing {
+            constructor() {
+                this.gpu = new GPU();
+                this.multiplyMatrix = [];
+                for (let i=0; i<10; i++)
+                {
+                    this.multiplyMatrix.push(eval(`this.gpu.createKernel(function(a,b) {
+                        return a[this.thread.x]*b[this.thread.x];
+                    }).setOutput([10])`));
+                }
+                console.log(this.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]));
+            }
+        }
+
+        t = new thing();
+        const matrices = generateMatrices();
+        const out = t.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]);
+        console.log(out); //*/
+    </script>
+
+    <script src="LearnAI.js"></script>
+    <script>
+        n = new NeuralNetwork(2, 3, 2).randomize();
+        n.print();
+        console.log(n.calculateCost([0,1], [1,0]));
+    </script>
+</head>
+
+<body>
+    <p>This is our ICS final project!</p>
+</body>
+</html>
