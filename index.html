@@ -7,7 +7,7 @@
     <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
     <script>
         // GPU is a constructor and namespace for browser
-        //*
+        /*
         const generateMatrices = () => {
             const matrices = [[], []]
             for (let y = 0; y < 512; y++){
@@ -23,24 +23,29 @@
 
         
         class thing {
-            gpu = new GPU();
-            multiplyMatrix = [];
             constructor() {
-                this.multiplyMatrix.push(eval(`this.gpu.createKernel(function(a) {
-                    return a[this.thread.x]*2;
-                }).setOutput([10])`));
+                this.gpu = new GPU();
+                this.multiplyMatrix = [];
+                for (let i=0; i<10; i++)
+                {
+                    this.multiplyMatrix.push(eval(`this.gpu.createKernel(function(a,b) {
+                        return a[this.thread.x]*b[this.thread.x];
+                    }).setOutput([10])`));
+                }
+                console.log(this.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]));
             }
         }
 
         t = new thing();
         const matrices = generateMatrices();
-        const out = t.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9]);
+        const out = t.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]);
         console.log(out); //*/
     </script>
 
     <script src="LearnAI.js"></script>
     <script>
         n = new NeuralNetwork(2, 3, 2).randomize();
+        n.print();
         console.log(n.calculateCost([0,1], [1,0]));
     </script>
 </head>
