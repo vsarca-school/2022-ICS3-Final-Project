@@ -1,8 +1,12 @@
 
-class NeuralNetwork {
-    gpu = new GPU();
+/*const layercomputers = eval(`gpu.createKernel(function(a) {
+                return a[this.thread.x];
+            }).setOutput([10]);`);*/
 
+class NeuralNetwork {
     constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
+        //Gpu.js
+        this.gpu = new GPU();
         // Layer sizes
         this.layersizes = [layer1, layer2].concat(otherLayers);
         // Layer biases
@@ -19,16 +23,26 @@ class NeuralNetwork {
             }
         }
         // Layer computation functions
-        this.layercomputers = Array(this.layersizes.length - 1);
-        for (let i = 0; i < this.layercomputers.length; i++) {
-            this.layercomputers[i] = eval(`gpu.createKernel(function(input, b, w) { // inputs, biases, weights
+        this.layercomputers = [];
+        for (let i=0; i<this.layerbiases.length; i++)
+        {
+            this.layercomputers.push(eval(`this.gpu.createKernel(function(layers, weights) { // layers is array with 2 elements, inputs and biases, and weights are the weights
+                return a[this.thread.x]*2;
+            }).setOutput([10])`));
+        }
+        //this.layercomputers = Array(this.layersizes.length - 1);
+        //for (let i = 0; i < this.layercomputers.length; i++) {
+            
+            /*this.layercomputers[i] = eval(`gpu.createKernel(function(input, b, w) { // inputs, biases, weights
+                console.log(test);
                 let sum = b[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += input[i]*w[i][this.thread.x];
                 }
                 return sum;
-            })`).setOutput([this.layersizes[i + 1]]);
-        }
+            })`).setOutput([this.layersizes[i + 1]]);*/
+        //}
+        console.log(this.layercomputers);
     }
     randomize() { // Random weights and biases
         for (let i = 0; i < this.layerbiases.length; i++) {
@@ -73,7 +87,7 @@ class NeuralNetwork {
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            console.log(this.layercomputers[i]);
+            console.log(this.layercomputers);
             currentLayer = this.layercomputers[i](data, this.layerbiases[i], this.layerweights[i]);
         }
         return currentLayer;
