@@ -4,7 +4,8 @@
             }).setOutput([10]);`);*/
 
 class NeuralNetwork {
-    constructor(layer1, layer2, ...otherLayers) { // Empty weights and biases
+    // Create the network with empty weights and biases
+    constructor(layer1, layer2, ...otherLayers) {
         //Gpu.js
         this.gpu = new GPU();
         // Layer sizes
@@ -35,7 +36,8 @@ class NeuralNetwork {
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
     }
-    randomize() { // Random weights and biases
+    // Called after the constructor to randomize the network
+    randomize() {
         for (let i = 0; i < this.layerbiases.length; i++) {
             for (let j = 0; j < this.layersizes[i + 1]; j++) {
                 this.layerbiases[i][j] = Math.random();
@@ -50,23 +52,35 @@ class NeuralNetwork {
         }
         return this;
     }
-    static fromFile(file) { // Loads AI from file, TODO
-        let n = NeuralNetwork(1, 1); // We are deleting the network anyways, so make it really really small
+    // TODO: Called after constructor to load a netowork from file
+    fromFile(file) {
         //let layersizes = file.
-        return n;
+        return this;
     }
 
-    print() { // Use console.log to print the contents of the class, this function explains the class so people can understand it
+    // This function explains the class so people can understand it
+    print() { // Use console.log to print the contents of the class instead
         console.log(`This is a placeholder description of the NeuralNetworks class
-I hope I remember to fill this in before we submit the final copy!`);
-    }
+I hope I remember to fill this in before we submit the final copy!`);}
 
+    // Calculate the cost of a single node, and a dataset respectively
     nodeCost(output, expected) {
         let error = output - expected;
         return error * error;
     }
-    calculateCost(data, targets) { // Takes an array of inputs and outputs and finds the cost of the neural network
+    Cost(data, targets) { // Takes an array of inputs and outputs and finds the cost of the neural network (average cost)
         let cost = 0.0;
+        // If its a dataset, calculate for each element, and then return average
+        if (data[0].isArray)
+        {
+            for (let i=0; i<data.length; i++)
+            {
+                cost += this.Cost(data[i], targets[i]);
+            }
+            return cost / data.length;
+        }
+
+        // Single input
         // Cost is difference between expected output and actual output
         let output = this.runNetwork(data);
         for (let i = 0; i < output.length; i++) {

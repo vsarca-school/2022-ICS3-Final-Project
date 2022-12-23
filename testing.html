@@ -44,10 +44,15 @@
 
     <script src="LearnAI.js"></script>
     <script>
-        dataset = null;
+        dataset = [[], []];
+        for (let i=0; i<1000; i++)
+        {
+            
+        }
+
         n = new NeuralNetwork(2, 3, 2).randomize();
         n.print();
-        console.log(n.calculateCost([0,1], [1,0]));
+        
         t = new DeepTrainer();
         t.train(n, dataset);
     </script>
