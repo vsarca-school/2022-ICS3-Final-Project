@@ -119,7 +119,7 @@ I hope I remember to fill this in before we submit the final copy!`);
 
 
 
-class DeepTrainer {
+class DeepLearner {
     // This function explains the class so students can understand what it does
     print() { // Use console.log to print the contents of the class instead
         console.log(`This is a placeholder description of the NeuralNetworks class
