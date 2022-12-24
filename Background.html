@@ -11,9 +11,9 @@
     document.getElementById("stop").onclick = function() {clearInterval(intervalID);};
 
     let a = 2;
-    let h = 1
+    let h = 0;
     function graph(n) {
-        return 50*(Math.E**(-0.01*(n-canvas.width/2)))*Math.sin(((n-canvas.width/2)-h)/a)
+        return 50*(Math.E**(-0.005*(n-canvas.width/2)))*Math.sin(((n-canvas.width/2)-h)/a);
     }
     function draw()
     {
@@ -23,10 +23,12 @@
         ctx.fillRect(0, 0, canvas.width,canvas.height);
         ctx.fillStyle = "red";
         for (let i = 0; i < canvas.width; i++) {
-            ctx.fillRect(i, canvas.height-graph(i), 10, 10);
+            ctx.fillRect(i, canvas.height/2-graph(i), 5, 5);
         }
-        h+=0.01;
-        
+        h+=0.0005;
+        a =0.1*Math.sin(h)+1;
+        if (h > 2*Math.PI) h = 0;
+
         ctx.fill();
     }
 </script></body></html>
