@@ -1,34 +1,39 @@
-<html><body>
-    <button id="start">Start</button>
-    <button id="stop">Stop</button>
-    <p><canvas id="canvasId" width="800" height="600" style="border: 1px solid black;"></canvas>
+<html>
+    <link rel="stylesheet" href="style.css" />
+    <body>
+    <p><canvas id="canvasId"></canvas>
     <script>
     canvas = document.getElementById("canvasId");
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
     if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
-    let intervalID;
-    let x = 100; let y = 100; let vx = 5; let vy = 10; let radius = 40;
-    document.getElementById("start").onclick = function() {intervalID = setInterval(draw, 10);};
-    document.getElementById("stop").onclick = function() {clearInterval(intervalID);};
-
+    let intervalID = setInterval(draw, 10);
     let a = 2;
     let h = 0;
     function graph(n) {
-        return 50*(Math.E**(-0.005*(n-canvas.width/2)))*Math.sin(((n-canvas.width/2)-h)/a);
+        return 50*(Math.E**(-0.004*(n-canvas.width/3)))*Math.sin(((n-canvas.width/3)-h)/a);
     }
+
+    function strGenerate(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        return result;
+    }
+
     function draw()
     {
-        ctx.beginPath();
-        ctx.fillStyle = "white";
-        //ctx.fillStyle = `rgb(255,255,255,0.2)`;
-        ctx.fillRect(0, 0, canvas.width,canvas.height);
+        ctx.clearRect(0, 0, canvas.width,canvas.height);
         ctx.fillStyle = "red";
-        for (let i = 0; i < canvas.width; i++) {
-            ctx.fillRect(i, canvas.height/2-graph(i), 5, 5);
+        for (let i = 0; i < canvas.width; i+=10) {
+            ctx.fillRect(i, canvas.height/2-graph(i), 10, 10);
         }
-        h+=0.0005;
-        a=0.1*Math.sin(h)+1;
-        if (h > 2*Math.PI) h = 0;
-
+        h+=0.01;
+        //a=0.1*Math.sin(h)+1;
+        ctx.font = "50px Fester";
+        ctx.fillText(strGenerate(10), 10, 50);
         ctx.fill();
     }
 </script></body></html>
