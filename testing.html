@@ -64,9 +64,8 @@
         n = new NeuralNetwork(2, 3, 2).randomize();
         n.print();
         
-        t = new DeepLearner(n, dataset, DeepTrainer.defaultSettings);
-        t.trainOnce();
-        t.trainOnce();
+        t = new DeepLearner(n, dataset, DeepLearner.defaultSettings);
+        t.train(1000);
     </script>
 </head>
 
