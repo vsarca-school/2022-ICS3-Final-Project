@@ -41,6 +41,19 @@ I hope I remember to fill this in before we submit the final copy!`);
                 return sigmoid(sum);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
+        // Layer computers for backpropagation
+        this.nodecomputers = [];
+        for (let i = 0; i < this.layerbiases.length; i++) // TODO
+        {
+            this.nodecomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
+                function ${NeuralNetwork.sigmoid}
+                let sum = biases[this.thread.x];
+                for (let i = 0; i < ${this.layersizes[i]}; i++) {
+                    sum += inputs[i]*weights[i][this.thread.x];
+                }
+                return sigmoid(sum);
+            }).setOutput([${this.layersizes[i + 1]}])`));
+        }
     }
     // Called after the constructor to randomize the network
     randomize() {
@@ -69,7 +82,7 @@ I hope I remember to fill this in before we submit the final copy!`);
         let error = output - expected;
         return error * error;
     }
-    Cost(data, targets, ...range) { // Takes an array of inputs and outputs and finds the cost of the neural network (average cost), range is [start,stop] for batchSize
+    /*Cost(data, targets, ...range) { // Takes an array of inputs and outputs and finds the cost of the neural network (average cost), range is [start,stop] for batchSize
         let cost = 0.0;
         // If its a dataset, calculate for each element, and then return average
         if (Array.isArray(data[0])) {
@@ -94,14 +107,31 @@ I hope I remember to fill this in before we submit the final copy!`);
             cost += this.nodeCost(output[i], targets[i]);
         }
         return cost;
+    }*/
+    Cost(output, expected) {
+        let cost = [];
+        for (let i=0; i<output.length; i++)
+        {
+            cost.push(this.nodeCost(output[i], expected[i]));
+        }
+        return cost;
     }
 
+    // Function to run the network
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            currentLayer = this.layercomputers[i](data, this.layerbiases[i], this.layerweights[i]);
+            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i]);
         }
         return currentLayer;
+    }
+    getNodeValues(data) {
+        let nodeValues = [this.layercomputers[0](data, this.layerbiases[i], this.layerweights[i])];
+        for (let i=1; i<this.layercomputers.length; i++)
+        {
+            nodeValues.push(this.layercomputers[i](nodeValues[i-1], this.layerbiases[i], this.layerweights[i]));
+        }
+        return nodeValues;
     }
     // Activation function
     static sigmoid(x) {
@@ -143,12 +173,25 @@ I hope I remember to fill this in before we submit the final copy!`);
         this.settings = settings;
         if (!settings.hasOwnProperty("batchsize")) this.settings.batchsize = 100;
         this.batchindex = 0;
+        // Weight gradients
+        this.wgradients = Array(this.network.layerweights.length);
+        for (let i = 0; i < this.network.layerweights.length; i++) {
+            wgradients[i] = Array(this.network.layerweights[i].length);
+            for (let j = 0; j < this.network.layerweights[i].length; j++) {
+                wgradients[i][j] = Array(this.network.layerweights[i][j].length);
+            }
+        }
+        // Bias gradients
+        this.bgradients = Array(this.network.layerbiases.length);
+        for (let i = 0; i < this.network.layerbiases.length; i++) {
+            bgradients[i] = Array(this.network.layerbiases[i].length);
+        }
     }
     // Pre-defined settings
     static defaultSettings = {
         learnRate: 1, // for gradient descent
         batchsize: 100, // give it 100 samples at a time
-        batchSplit: 0.8 // 80% used, 20% saved for testing its learning on never before seen data
+        batchsplit: 0.8 // 80% used, 20% saved for testing its learning on never before seen data
     }
 
     // Train the network contsantly
@@ -159,11 +202,32 @@ I hope I remember to fill this in before we submit the final copy!`);
     }
     trainOnce() {
         // defer running to runOnce
-        let cost = this.runOnce();
+        let cost = this.getGradients();
         console.log(cost);
     }
-    runOnce() {
-        // Run batchsize samples of the training data
+    getGradients() {
+        // Clear gradients
+        for (let i = 0; i < this.wgradients.length; i++) {
+            for (let j = 0; j < this.wgradients[i].length; j++) {
+                wgradients[i][j].fill(0);
+            }
+        }
+        for (let i = 0; i < this.bgradients.length; i++) {
+            bgradients[i].fill(0);
+        }
+        // Run batchsize samples of the training data and calculate gradients
+        for (let i = 0; i < this.settings.batchsize; i++) {
+            // Get the node values of each input
+            let nodevalues = this.network.getNodeValues(this.trainingset);
+            // Find the cost
+            let cost = this.network.Cost(nodevalues[nodevalues.length-1], this.trainingset[1]);
+            // Find gradient of last layer nodes
+            
+
+            this.batchindex = (this.batchindex + 1) % this.trainingset.length;
+        }
+
+        /*
         let cost;
         let batchend = this.batchindex + this.settings.batchsize;
         if (batchend > this.trainingset[0].length) {
@@ -176,7 +240,7 @@ I hope I remember to fill this in before we submit the final copy!`);
         // increase batchindex
         this.batchindex = (this.batchindex + this.settings.batchsize) % this.trainingset[0].length;
         // return cost
-        return cost;
+        return cost;*/
     }
 
     // Derivatives of activiation function (y is the output of activation function)
