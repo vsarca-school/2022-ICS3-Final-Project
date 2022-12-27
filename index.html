@@ -3,7 +3,61 @@
 <link rel="stylesheet" href="style.css">
 
 <head>
+    <canvas id="canvasId"></canvas>
     <script>
+        canvas = document.getElementById("canvasId");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
+        let intervalID = setInterval(draw, 10);
+        let a = 2;
+        let h = 0;
+        function graph(n) {
+            return 50 * (Math.E ** (-0.004 * (n - canvas.width / 3))) * Math.sin(((n - canvas.width / 3) - h) / a);
+        }
+
+        function strGenerate(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:"<>?';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            return result;
+        }
+        let counter = 0;
+        let text;
+        let textarr = [];
+        function draw() {
+            //Generate new text
+            if (counter == 0) {
+                for (let i = 0; i < canvas.width / 10; i++) {
+                    textarr[i] = strGenerate(canvas.height / 10);
+                }
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            a = 0.01 * Math.sin(h) + 1;
+            ctx.font = "bold 0.9vw Courier";
+            for (let i = 0; i < canvas.width / 10; i++) {
+                for (let j = 0; j < textarr[0].length; j++) {
+                    if (10 + j * 10 < canvas.height / 2 - graph(i * 10) && 20 + j * 10 > canvas.height / 2 - graph(i * 10)) {
+                        ctx.fillStyle = "#2f2d69";
+                        ctx.fillText(textarr[i].charAt(j), i * 10, 10 + j * 10);
+                    }
+                }
+            }
+
+            ctx.fill();
+
+            // ctx.fillStyle = "red";
+            // for (let i = 0; i < canvas.width; i+=10) {
+            //     ctx.fillRect(i, canvas.height/2-graph(i), 10, 10);
+            // }
+            h += 0.01;
+
+            counter++;
+            counter %= 50;
+        }
         let title;
         window.onload = function () {
             title = document.getElementById("title");
@@ -29,7 +83,7 @@
         </h1>
         <button id="button">Start Creating</button>
     </div>
-    
+
 </body>
 
 </html>
