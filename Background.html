@@ -17,23 +17,46 @@
 
     function strGenerate(length) {
         var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:"<>?';
         var charactersLength = characters.length;
         for ( var i = 0; i < length; i++ ) result += characters.charAt(Math.floor(Math.random() * charactersLength));
         return result;
     }
-
+    let counter = 0;
+    let text;
+    let textarr = [];
     function draw()
     {
-        ctx.clearRect(0, 0, canvas.width,canvas.height);
-        ctx.fillStyle = "red";
-        for (let i = 0; i < canvas.width; i+=10) {
-            ctx.fillRect(i, canvas.height/2-graph(i), 10, 10);
+        ctx.fillStyle = (9,7,58);
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+        //Generate new text
+        if (counter == 0) {
+            for (let i = 0; i < canvas.width/10; i++) {
+                textarr[i] = strGenerate(canvas.height/10);
+            }
         }
-        h+=0.01;
+
+        ctx.clearRect(0, 0, canvas.width,canvas.height);
         //a=0.1*Math.sin(h)+1;
-        ctx.font = "50px Fester";
-        ctx.fillText(strGenerate(10), 10, 50);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 16px Courier";
+        for (let i = 0; i < canvas.width/10; i++) {
+            for (let j = 0; j < textarr[0].length; j++) {
+                if (10+j*10 < canvas.height/2-graph(i*10) && 20+j*10 > canvas.height/2-graph(i*10)) ctx.fillStyle = "yellow";
+                else ctx.fillStyle = "white";
+                ctx.fillText(textarr[i].charAt(j), i*10, 10+j*10);
+            }
+        }
+        
         ctx.fill();
+
+        // ctx.fillStyle = "red";
+        // for (let i = 0; i < canvas.width; i+=10) {
+        //     ctx.fillRect(i, canvas.height/2-graph(i), 10, 10);
+        // }
+        h+=0.01;
+
+        counter++;
+        counter %= 50;
     }
 </script></body></html>
