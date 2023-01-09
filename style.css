@@ -10,7 +10,7 @@ body {
     user-select: none;
 }
 
-#titleBox {
+.titleBox {
     text-align: center;
     margin: auto;
     width: 60%;
@@ -22,7 +22,7 @@ body {
     right: 0;
 }
 
-#heading {
+.heading {
     margin-top: -3vw;
     font-family: 'Fester';
     color: #fcfcfc;
@@ -31,7 +31,7 @@ body {
     text-align: center;
 }
 
-#title {
+.title {
     margin: auto;
     color: #ecdf1f;
     text-shadow: 0.6vw 0.6vw #4ebeda;
@@ -39,7 +39,7 @@ body {
     font-weight: bold;
 }
 
-#button {
+.button {
     font-family: 'Fester';
     font-size: 1vw;
     font-weight: bolder;
@@ -54,7 +54,15 @@ body {
     transition-duration: 0.5s;
 }
 
-#button:hover {
+.button:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
+}
+
+a {
+    text-decoration: none;
+    color: #fcfcfc;
+}
+a:onclick {
+    color: #fcfcfc;
 }
