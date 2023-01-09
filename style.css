@@ -17,7 +17,7 @@ body {
     height: 40%;
     position: absolute;
     top: 0;
-    bottom: 24%;
+    bottom: 15%;
     left: 0;
     right: 0;
 }
@@ -52,6 +52,8 @@ body {
     background-color: #3c87c4;
     box-shadow: 0 0 10px #4ea6ee;
     transition-duration: 0.5s;
+
+    margin-top: 12%;
 }
 
 .button:hover {
