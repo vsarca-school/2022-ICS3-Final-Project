@@ -1,7 +1,7 @@
 <html>
     <link rel="stylesheet" href="style.css" />
     <body>
-    <p><canvas id="canvasId"></canvas>
+    <p><canvas id="canvasId" oncontextmenu="return false;"></canvas>
     <script>
     canvas = document.getElementById("canvasId");
     canvas.width  = window.innerWidth;
@@ -10,11 +10,13 @@
     if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
     ctx.font = "bold 16px Courier";
     let intervalID = setInterval(draw, 10);
+
     let a = 2;
     let h = 0;
     function graph(n) {
         return 50*(Math.E**(-0.004*(n-canvas.width/3)))*Math.sin(((n-canvas.width/3)-h)/a);
     }
+    
 
     function strGenerate(length) {
         var result = '';
