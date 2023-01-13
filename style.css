@@ -68,3 +68,19 @@ a {
 a:onclick {
     color: #fcfcfc;
 }
+
+.topBar {
+    width: 100vw;
+    height: 6vh;
+    color: #09073a;
+}
+
+#arrow {
+    margin-left: 7px;
+    width: 6vh;
+    height: 6vh;
+    transition-duration: 0.5s;
+}
+#arrow:hover {
+    transform: translateX(-10px);
+}
