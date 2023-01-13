@@ -176,15 +176,15 @@ I hope I remember to fill this in before we submit the final copy!`);
         // Weight gradients
         this.wgradients = Array(this.network.layerweights.length);
         for (let i = 0; i < this.network.layerweights.length; i++) {
-            wgradients[i] = Array(this.network.layerweights[i].length);
+            this.wgradients[i] = Array(this.network.layerweights[i].length);
             for (let j = 0; j < this.network.layerweights[i].length; j++) {
-                wgradients[i][j] = Array(this.network.layerweights[i][j].length);
+                this.wgradients[i][j] = Array(this.network.layerweights[i][j].length);
             }
         }
         // Bias gradients
         this.bgradients = Array(this.network.layerbiases.length);
         for (let i = 0; i < this.network.layerbiases.length; i++) {
-            bgradients[i] = Array(this.network.layerbiases[i].length);
+            this.bgradients[i] = Array(this.network.layerbiases[i].length);
         }
     }
     // Pre-defined settings
@@ -201,11 +201,26 @@ I hope I remember to fill this in before we submit the final copy!`);
         return trainer; // In case the user wants to edit this interval
     }
     trainOnce() {
-        // defer running to runOnce
-        let cost = this.getGradients();
+        // Get the average gradient of all data points
+        this.updateGradients();
         console.log(cost);
     }
-    getGradients() {
+    updateGradients() {
+        this.clearGradients();
+        // Run batchsize samples of the training data and calculate gradients
+        for (let i = 0; i < this.settings.batchsize; i++) {
+            // Get the node values of each input
+            let nodevalues = this.network.getNodeValues(this.trainingset);
+            console.log(nodevalues);
+            // Find the cost
+            let cost = this.network.Cost(nodevalues[nodevalues.length-1], this.trainingset[1]);
+            // Find gradient of last layer nodes
+            
+
+            this.batchindex = (this.batchindex + 1) % this.trainingset.length;
+        }
+    }
+    clearGradients() {
         // Clear gradients
         for (let i = 0; i < this.wgradients.length; i++) {
             for (let j = 0; j < this.wgradients[i].length; j++) {
@@ -215,17 +230,8 @@ I hope I remember to fill this in before we submit the final copy!`);
         for (let i = 0; i < this.bgradients.length; i++) {
             bgradients[i].fill(0);
         }
-        // Run batchsize samples of the training data and calculate gradients
-        for (let i = 0; i < this.settings.batchsize; i++) {
-            // Get the node values of each input
-            let nodevalues = this.network.getNodeValues(this.trainingset);
-            // Find the cost
-            let cost = this.network.Cost(nodevalues[nodevalues.length-1], this.trainingset[1]);
-            // Find gradient of last layer nodes
-            
-
-            this.batchindex = (this.batchindex + 1) % this.trainingset.length;
-        }
+    }
+    updateGradient(datapoint) {
 
         /*
         let cost;
