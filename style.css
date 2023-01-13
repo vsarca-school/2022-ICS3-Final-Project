@@ -68,3 +68,9 @@ a {
 a:onclick {
     color: #fcfcfc;
 }
+
+.topBar {
+    width: 100vw;
+    height: 6vh;
+    color: #09073a;
+}
