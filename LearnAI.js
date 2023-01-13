@@ -126,10 +126,10 @@ I hope I remember to fill this in before we submit the final copy!`);
         return currentLayer;
     }
     getNodeValues(data) {
-        let nodeValues = [this.layercomputers[0](data, this.layerbiases[i], this.layerweights[i])];
-        for (let i=1; i<this.layercomputers.length; i++)
+        let nodeValues = [data]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
+        for (let i=0; i<this.layercomputers.length; i++)
         {
-            nodeValues.push(this.layercomputers[i](nodeValues[i-1], this.layerbiases[i], this.layerweights[i]));
+            nodeValues.push(this.layercomputers[i](nodeValues[i], this.layerbiases[i], this.layerweights[i]));
         }
         return nodeValues;
     }
@@ -203,15 +203,24 @@ I hope I remember to fill this in before we submit the final copy!`);
     trainOnce() {
         // Get the average gradient of all data points
         this.updateGradients();
-        console.log(cost);
     }
     updateGradients() {
         this.clearGradients();
         // Run batchsize samples of the training data and calculate gradients
         for (let i = 0; i < this.settings.batchsize; i++) {
             // Get the node values of each input
-            let nodevalues = this.network.getNodeValues(this.trainingset);
-            console.log(nodevalues);
+            let nodevalues = this.network.getNodeValues(this.trainingset[0][this.batchindex]);
+            // Calculate the gradients for all weights
+            for (let j = 0; j < this.wgradients.length; j++)
+            {
+                for (let k=0; k< this.wgradients[j].length; k++)
+                {
+                    for (let l=0; l<this.wgradients[j][k].length; l++)
+                    {
+                        this.wgradients[j][k][l] += ;
+                    }
+                }
+            }
             // Find the cost
             let cost = this.network.Cost(nodevalues[nodevalues.length-1], this.trainingset[1]);
             // Find gradient of last layer nodes
@@ -224,14 +233,14 @@ I hope I remember to fill this in before we submit the final copy!`);
         // Clear gradients
         for (let i = 0; i < this.wgradients.length; i++) {
             for (let j = 0; j < this.wgradients[i].length; j++) {
-                wgradients[i][j].fill(0);
+                this.wgradients[i][j].fill(0);
             }
         }
         for (let i = 0; i < this.bgradients.length; i++) {
-            bgradients[i].fill(0);
+            this.bgradients[i].fill(0);
         }
     }
-    updateGradient(datapoint) {
+    //updateGradient(datapoint) {
 
         /*
         let cost;
@@ -247,7 +256,7 @@ I hope I remember to fill this in before we submit the final copy!`);
         this.batchindex = (this.batchindex + this.settings.batchsize) % this.trainingset[0].length;
         // return cost
         return cost;*/
-    }
+    //}
 
     // Derivatives of activiation function (y is the output of activation function)
     static dSigmoid(y) {
