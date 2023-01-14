@@ -1,16 +1,18 @@
 
-/*const layercomputers = eval(`gpu.createKernel(function(a) {
-                return a[this.thread.x];
-            }).setOutput([10]);`);*/
-
 class NeuralNetwork {
-    // This function explains the class so students can understand what it does
-    print() { // Use console.log to print the contents of the class instead
+    /* ********************************************************************************
+        This function explains the class so students can understand what it does
+        Example usage: NeuralNetwork.print();
+    ******************************************************************************** */
+    static print() { // Use console.log to print the contents of the class instead
         console.log(`This is a placeholder description of the NeuralNetworks class
 I hope I remember to fill this in before we submit the final copy!`);
     }
 
-    // Create the network with empty weights and biases
+    /* ********************************************************************************
+      This constructor creates a neural network with undefined weights and biases
+      Example usage: let nn = new NeuralNetwork(784, 100, 10);
+    ******************************************************************************** */
     constructor(layer1, layer2, ...otherLayers) {
         //Gpu.js
         this.gpu = new GPU();
@@ -55,7 +57,10 @@ I hope I remember to fill this in before we submit the final copy!`);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
     }
-    // Called after the constructor to randomize the network
+    /* ********************************************************************************
+      This function will randomize all the weights in an existing network
+      Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+    ******************************************************************************** */
     randomize() {
         for (let i = 0; i < this.layerbiases.length; i++) {
             for (let j = 0; j < this.layersizes[i + 1]; j++) {
@@ -71,17 +76,59 @@ I hope I remember to fill this in before we submit the final copy!`);
         }
         return this;
     }
-    // TODO: Called after constructor to load a netowork from file
-    fromFile(file) {
+    /* ********************************************************************************
+      This function will load a neural network from a save file
+      Example usage: let nn = new NeuralNetwork(784, 100, 10).fromFile("nn.txt");
+    ******************************************************************************** */
+    fromFile(file) {                                                                                                 // TODO
+        //let layersizes = file.
+        return this;
+    }
+    /* ********************************************************************************
+      This function will save a neural network to a save file
+      Example usage: nn.saveToFile("nn.txt");
+    ******************************************************************************** */
+    saveToFile(file) {                                                                                                 // TODO
         //let layersizes = file.
         return this;
     }
 
-    // Calculate the cost of a single node, and a dataset respectively
-    nodeCost(output, expected) {
+    /* ********************************************************************************
+      The singleCost function calculates the cost of a single output of the network, can be set by user 
+      to functions other than the default value, user must include derivative so that the network is trainable
+      Both functions have 2 inputs and a return value
+      Example usage: nn.setCostFunction(myfunc, myinverse);
+    ******************************************************************************** */
+    defaultCost(output, expected) {
         let error = output - expected;
         return error * error;
     }
+    defaultCostDerivative(output, expected) {                                                                                                 // TODO
+        let error = output - expected;
+        return error * error;
+    }
+    singleCost = [this.defaultCost, this.defaultCostDerivative];
+    setCostFunction(normal, derivative) {
+        this.singleCost = [normal, derivative];
+    }
+
+    /* ********************************************************************************
+      This function calculates the total cost of the network's output, not for user
+      Example usage: N/A
+    ******************************************************************************** */
+    totalCost(output, expected) {
+        let cost = [];
+        for (let i=0; i<output.length; i++)
+        {
+            cost.push(this.singleCost[0](output[i], expected[i]));
+        }
+        return cost;
+    }
+
+    /* ********************************************************************************
+      This function calculates the cost of the netowrk for a given datapoint or a set of datapoints
+      Example usage: N/A
+    ******************************************************************************** */                                                                                                 // TODO code needs to be nicer, cleaner, easier to use, faster, and just better
     /*Cost(data, targets, ...range) { // Takes an array of inputs and outputs and finds the cost of the neural network (average cost), range is [start,stop] for batchSize
         let cost = 0.0;
         // If its a dataset, calculate for each element, and then return average
@@ -108,35 +155,48 @@ I hope I remember to fill this in before we submit the final copy!`);
         }
         return cost;
     }*/
-    Cost(output, expected) {
-        let cost = [];
-        for (let i=0; i<output.length; i++)
-        {
-            cost.push(this.nodeCost(output[i], expected[i]));
-        }
-        return cost;
-    }
 
-    // Function to run the network
+    /* ********************************************************************************
+      These functions run the network and return its final outputs
+      getNodeValues is used by the deep learner because it saves all intermittent values,
+      which are necessary for training
+      Example usage: N/A
+    ******************************************************************************** */
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i]);
+            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i])[1];
         }
         return currentLayer;
     }
     getNodeValues(data) {
-        let nodeValues = [data]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
+        let nodeValues = [[data]]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
         for (let i=0; i<this.layercomputers.length; i++)
         {
             nodeValues.push(this.layercomputers[i](nodeValues[i], this.layerbiases[i], this.layerweights[i]));
         }
         return nodeValues;
     }
-    // Activation function
-    static sigmoid(x) {
+
+
+    /* ********************************************************************************
+      The activation function is applied to a node's input to find the nodes output, can be set by user 
+      to functions other than the default value, user must include derivative so that the network is trainable
+      Both functions have 1 input and a return value
+      Example usage: nn.setActivationFunction(myfunc, myinverse);
+    ******************************************************************************** */
+    sigmoid(x) {
         return 1 / (1 + Math.exp(-x));
     }
+    sigmoidDerivative(y) {
+        return y * (1 - y);
+    }
+    activation = [this.sigmoid, this.sigmoidDerivative];
+    setActivationFunction(normal, derivative) {
+        this.activation = [normal, derivative];
+    }
+
+    //                                                                                                 // TODO: put more default activation function here like SiLu and ReLu, which are cool, but then we also need to have an output activation which im not willing to implement just yet
 }
 
 
@@ -257,9 +317,4 @@ I hope I remember to fill this in before we submit the final copy!`);
         // return cost
         return cost;*/
     //}
-
-    // Derivatives of activiation function (y is the output of activation function)
-    static dSigmoid(y) {
-        return y * (1 - y);
-    }
 }

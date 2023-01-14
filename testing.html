@@ -61,12 +61,14 @@
             }
         }
 
+        NeuralNetwork.print();
+
         n = new NeuralNetwork(2, 3, 2).randomize();
         n.print();
         
-        t = new DeepLearner(n, dataset, DeepLearner.defaultSettings);
+        //t = new DeepLearner(n, dataset, DeepLearner.defaultSettings);
         //t.train(1000);
-        t.trainOnce();
+        //t.trainOnce();
     </script>
 </head>
 
