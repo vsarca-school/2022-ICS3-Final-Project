@@ -1,4 +1,11 @@
 
+
+/* ********************************************************************************
+    This class is responsible for storing the weights and biases of a neural network, 
+    as well as the gpu programs and other function needed to run the network and
+    evaluate it
+    Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+******************************************************************************** */
 class NeuralNetwork {
     /* ********************************************************************************
         This function explains the class so students can understand what it does
@@ -6,7 +13,7 @@ class NeuralNetwork {
     ******************************************************************************** */
     static print() { // Use console.log to print the contents of the class instead
         console.log(`This is a placeholder description of the NeuralNetworks class
-I hope I remember to fill this in before we submit the final copy!`);
+I hope I remember to fill this in before we submit the final copy!`);                                                                                                 // TODO
     }
 
     /* ********************************************************************************
@@ -16,13 +23,16 @@ I hope I remember to fill this in before we submit the final copy!`);
     constructor(layer1, layer2, ...otherLayers) {
         //Gpu.js
         this.gpu = new GPU();
+
         // Layer sizes
         this.layersizes = [layer1, layer2].concat(otherLayers);
+
         // Layer biases
         this.layerbiases = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerbiases.length; i++) {
             this.layerbiases[i] = Array(this.layersizes[i + 1]);
         }
+
         // Layer weights
         this.layerweights = Array(this.layersizes.length - 1);
         for (let i = 0; i < this.layerweights.length; i++) {
@@ -31,6 +41,7 @@ I hope I remember to fill this in before we submit the final copy!`);
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
         }
+
         // Layer computation functions ( Note to self: if you print this array, everything will magically stop working )
         this.layercomputers = [];
         for (let i = 0; i < this.layerbiases.length; i++) {
@@ -44,6 +55,7 @@ I hope I remember to fill this in before we submit the final copy!`);
                 return ${this.activation[0].name}(sum);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
+
         // Layer computers for backpropagation
         this.nodecomputers = [];
         for (let i = 0; i < this.layerbiases.length; i++)                                                                           // TODO
@@ -119,15 +131,14 @@ I hope I remember to fill this in before we submit the final copy!`);
     ******************************************************************************** */
     totalCost(output, expected) {
         let cost = [];
-        for (let i=0; i<output.length; i++)
-        {
+        for (let i = 0; i < output.length; i++) {
             cost.push(this.singleCost[0](output[i], expected[i]));
         }
         return cost;
     }
 
     /* ********************************************************************************
-      This function calculates the cost of the netowrk for a given datapoint or a set of datapoints
+      This function calculates the cost of the network for a given datapoint or a set of datapoints
       Example usage: N/A
     ******************************************************************************** */                                                                                                 // TODO code needs to be nicer, cleaner, easier to use, faster, and just better
     /*Cost(data, targets, ...range) { // Takes an array of inputs and outputs and finds the cost of the neural network (average cost), range is [start,stop] for batchSize
@@ -167,14 +178,12 @@ I hope I remember to fill this in before we submit the final copy!`);
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
             currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i]);
-            console.log(currentLayer);
         }
         return currentLayer;
     }
     getNodeValues(data) {
         let nodeValues = [[data]]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
-        for (let i=0; i<this.layercomputers.length; i++)
-        {
+        for (let i = 0; i < this.layercomputers.length; i++) {
             nodeValues.push(this.layercomputers[i](nodeValues[i], this.layerbiases[i], this.layerweights[i]));
         }
         return nodeValues;
@@ -204,37 +213,52 @@ I hope I remember to fill this in before we submit the final copy!`);
 
 
 
-
-
-
+/* ********************************************************************************
+    This class is responsible for training the neural network it is assigned to
+    as well as the gpu programs and other function needed to run the network and
+    evaluate it
+    Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+******************************************************************************** */
 class DeepLearner {
-    // This function explains the class so students can understand what it does
-    print() { // Use console.log to print the contents of the class instead
+    /* ********************************************************************************
+        This function explains the class so students can understand what it does
+        Example usage: DeepLearner.print();
+    ******************************************************************************** */
+    static print() { // Use console.log to print the contents of the class instead
         console.log(`This is a placeholder description of the NeuralNetworks class
-I hope I remember to fill this in before we submit the final copy!`);
+I hope I remember to fill this in before we submit the final copy!`);                                                                                                 // TODO
     }
 
-    // This class requires a network, training data, and some settings on how to train the network
+    /* ********************************************************************************
+      This constructor generates all the arrays and data required to be able to train
+      a given neural netowrk. The network cannot be changed after initialization
+      See defaultSettings for a list of possible settings, or read this messy constructor
+      Example usage: let dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
+    ******************************************************************************** */
     constructor(network, dataset, settings) {
         // Variables
         this.network = network;
         this.trainingset = [[], []];
         this.testingset = [[], []];
+
         // Fill the two sets using the batchSplit setting
         let trainamount = dataset[0].length * 0.8; // default setting
-        if (settings.hasOwnProperty("batchSplit")) trainamount = dataset[0].length * settings.batchSplit;
+        if (settings.hasOwnProperty("batchsplit")) trainamount = dataset[0].length * settings.batchSplit;
+
         for (let i = 0; i < trainamount; i++) {
-            this.trainingset[0].push(dataset[0][i]);
+            this.trainingset[0].push(dataset[0][i]);                                                                    // TODO: there must be a more efficient way to split arrays
             this.trainingset[1].push(dataset[1][i]);
         }
         for (let i = trainamount; i < dataset[0].length; i++) {
             this.testingset[0].push(dataset[0][i]);
             this.testingset[1].push(dataset[1][i]);
         }
+
         // More variables
         this.settings = settings;
         if (!settings.hasOwnProperty("batchsize")) this.settings.batchsize = 100;
         this.batchindex = 0;
+
         // Weight gradients
         this.wgradients = Array(this.network.layerweights.length);
         for (let i = 0; i < this.network.layerweights.length; i++) {
@@ -243,25 +267,40 @@ I hope I remember to fill this in before we submit the final copy!`);
                 this.wgradients[i][j] = Array(this.network.layerweights[i][j].length);
             }
         }
+
         // Bias gradients
         this.bgradients = Array(this.network.layerbiases.length);
         for (let i = 0; i < this.network.layerbiases.length; i++) {
             this.bgradients[i] = Array(this.network.layerbiases[i].length);
         }
     }
-    // Pre-defined settings
+
+    /* ********************************************************************************
+      This object stores all the settings for the learner, which are explained in the object's comments
+      Example usage: let dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
+    ******************************************************************************** */
     static defaultSettings = {
-        learnRate: 1, // for gradient descent
-        batchsize: 100, // give it 100 samples at a time
+        learnrate: 1, // for gradient descent
+        batchsize: 100, // give it 100 samples at a time                                                                                                 // TODO: Make these comments
         batchsplit: 0.8 // 80% used, 20% saved for testing its learning on never before seen data
     }
 
-    // Train the network contsantly
+    /* ********************************************************************************
+      This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
+      This function is here for training until done
+      Example usage: let trainer = train(2000);
+    ******************************************************************************** */
     train(milliseconds) {
         // Loop
-        let trainer = setInterval(this.trainOnce.bind(this), milliseconds);
+        let trainer = setInterval(this.trainOnce.bind(this), milliseconds);                                                                                                 // TODO: store this in the function to automatically turn off when fully trained maybe? maybe its a setting
         return trainer; // In case the user wants to edit this interval
     }
+
+    /* ********************************************************************************
+      Everything below this point is unfinished                                                                                                 // TODO: Finish everything below this point
+    ******************************************************************************** */
+    
+    
     trainOnce() {
         // Get the average gradient of all data points
         this.updateGradients();
@@ -273,20 +312,17 @@ I hope I remember to fill this in before we submit the final copy!`);
             // Get the node values of each input
             let nodevalues = this.network.getNodeValues(this.trainingset[0][this.batchindex]);
             // Calculate the gradients for all weights
-            for (let j = 0; j < this.wgradients.length; j++)
-            {
-                for (let k=0; k< this.wgradients[j].length; k++)
-                {
-                    for (let l=0; l<this.wgradients[j][k].length; l++)
-                    {
+            for (let j = 0; j < this.wgradients.length; j++) {
+                for (let k = 0; k < this.wgradients[j].length; k++) {
+                    for (let l = 0; l < this.wgradients[j][k].length; l++) {
                         this.wgradients[j][k][l] += 0; /// To scrap and replace
                     }
                 }
             }
             // Find the cost
-            let cost = this.network.Cost(nodevalues[nodevalues.length-1], this.trainingset[1]);
+            let cost = this.network.Cost(nodevalues[nodevalues.length - 1], this.trainingset[1]);
             // Find gradient of last layer nodes
-            
+
 
             this.batchindex = (this.batchindex + 1) % this.trainingset.length;
         }
@@ -304,19 +340,19 @@ I hope I remember to fill this in before we submit the final copy!`);
     }
     //updateGradient(datapoint) {
 
-        /*
-        let cost;
-        let batchend = this.batchindex + this.settings.batchsize;
-        if (batchend > this.trainingset[0].length) {
-            // around the end, two calls to test data
-            cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, this.trainingset[0].length) + this.network.Cost(this.trainingset[0], this.trainingset[1], 0, batchend - this.trainingset[0].length);
-        }
-        else {
-            cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, batchend);
-        }
-        // increase batchindex
-        this.batchindex = (this.batchindex + this.settings.batchsize) % this.trainingset[0].length;
-        // return cost
-        return cost;*/
+    /*
+    let cost;
+    let batchend = this.batchindex + this.settings.batchsize;
+    if (batchend > this.trainingset[0].length) {
+        // around the end, two calls to test data
+        cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, this.trainingset[0].length) + this.network.Cost(this.trainingset[0], this.trainingset[1], 0, batchend - this.trainingset[0].length);
+    }
+    else {
+        cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, batchend);
+    }
+    // increase batchindex
+    this.batchindex = (this.batchindex + this.settings.batchsize) % this.trainingset[0].length;
+    // return cost
+    return cost;*/
     //}
 }
