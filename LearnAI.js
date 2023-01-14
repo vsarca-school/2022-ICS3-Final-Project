@@ -31,29 +31,30 @@ I hope I remember to fill this in before we submit the final copy!`);
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
         }
-        // Layer computation functions (Note to self: if you print this array, everything will magically stop working)
+        // Layer computation functions ( Note to self: if you print this array, everything will magically stop working )
         this.layercomputers = [];
         for (let i = 0; i < this.layerbiases.length; i++) {
-            this.layercomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
-                function ${NeuralNetwork.sigmoid}
+            //this.layercomputers.push(eval(
+            (console.log(`this.gpu.createKernel(function(inputs, biases, weights) {
+                function ${this.activation[0]}
                 let sum = biases[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += inputs[i]*weights[i][this.thread.x];
                 }
-                return sigmoid(sum);
+                return ${this.activation[0].name}(sum);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
         // Layer computers for backpropagation
         this.nodecomputers = [];
-        for (let i = 0; i < this.layerbiases.length; i++) // TODO
+        for (let i = 0; i < this.layerbiases.length; i++)                                                                           // TODO
         {
             this.nodecomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
-                function ${NeuralNetwork.sigmoid}
+                function ${this.activation[0]}
                 let sum = biases[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += inputs[i]*weights[i][this.thread.x];
                 }
-                return sigmoid(sum);
+                return ${this.activation[0].name}(sum);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
     }
@@ -165,7 +166,8 @@ I hope I remember to fill this in before we submit the final copy!`);
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i])[1];
+            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i]);
+            console.log(currentLayer);
         }
         return currentLayer;
     }
@@ -277,7 +279,7 @@ I hope I remember to fill this in before we submit the final copy!`);
                 {
                     for (let l=0; l<this.wgradients[j][k].length; l++)
                     {
-                        this.wgradients[j][k][l] += ;
+                        this.wgradients[j][k][l] += 0; /// To scrap and replace
                     }
                 }
             }

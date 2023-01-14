@@ -63,8 +63,8 @@
 
         NeuralNetwork.print();
 
-        n = new NeuralNetwork(2, 3, 2).randomize();
-        n.print();
+        nn = new NeuralNetwork(2, 3, 2).randomize();
+        console.log(nn.runNetwork(dataset[0][0]));
         
         //t = new DeepLearner(n, dataset, DeepLearner.defaultSettings);
         //t.train(1000);
