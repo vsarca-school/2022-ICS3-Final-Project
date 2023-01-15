@@ -297,7 +297,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     }
 
     /* ********************************************************************************
-      Everything below this point is unfinished                                                                                                 // TODO: Finish everything below this point
+      Everything below this point is unfinished                                                                                                 // TODO: Finish everything below this point, it really doesnt do much yet, and I have no idea how im going to do this yet
     ******************************************************************************** */
     
     
