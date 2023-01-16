@@ -43,31 +43,40 @@ I hope I remember to fill this in before we submit the final copy!`);           
         }
 
         // Layer computation functions ( Note to self: if you print this array, everything will magically stop working )
-        this.layercomputers = [];
+        this.layercomputers = [[], []];
         for (let i = 0; i < this.layerbiases.length; i++) {
-            //this.layercomputers.push(eval(
-            (console.log(`this.gpu.createKernel(function(inputs, biases, weights) {
-                function ${this.activation[0]}
+            this.layercomputers[0].push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
                 let sum = biases[this.thread.x];
                 for (let i = 0; i < ${this.layersizes[i]}; i++) {
                     sum += inputs[i]*weights[i][this.thread.x];
                 }
-                return ${this.activation[0].name}(sum);
+                return sum;
+            }).setOutput([${this.layersizes[i + 1]}])`));
+            this.layercomputers[1].push(eval(`this.gpu.createKernel(function(weighted_inputs) {
+                function ${this.activation[0]}
+                return ${this.activation[0].name}(weighted_inputs[this.thread.x]);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
-
-        // Layer computers for backpropagation
-        this.nodecomputers = [];
-        for (let i = 0; i < this.layerbiases.length; i++)                                                                           // TODO
-        {
-            this.nodecomputers.push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
-                function ${this.activation[0]}
-                let sum = biases[this.thread.x];
-                for (let i = 0; i < ${this.layersizes[i]}; i++) {
-                    sum += inputs[i]*weights[i][this.thread.x];
+        // Node computation functions (for backpropagation and gradient descent)
+        this.outputnodecomputer = eval(`this.gpu.createKernel(function(weighted_inputs, outputs, expected_outputs) {
+            function ${this.singleCost[1]}
+            function ${this.activation[1]}
+            return ${this.singleCost[1].name}(outputs[this.thread.x],expected_outputs[this.thread.x]) 
+                * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
+        }).setOutput([${this.layersizes[this.layersizes.length-1]}])`);
+        this.hiddennodecomputers = [];
+        for (let i = 1; i < this.layerbiases.length-1; i++) {
+            this.layercomputers[0].push(eval(`this.gpu.createKernel(function(weighted_inputs, biases, weights) {
+                function ${this.singleCost[1]}
+                function ${this.activation[1]}
+                let value = 0;
+                for (int i=0; i<${this.layersizes[i+1]}; i++)
+                {
+                    ;
                 }
-                return ${this.activation[0].name}(sum);
-            }).setOutput([${this.layersizes[i + 1]}])`));
+                return ${this.singleCost[1].name}(outputs[this.thread.x],expected_outputs[this.thread.x]) 
+                    * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
+            }).setOutput([${this.layersizes[i]}])`));
         }
     }
     /* ********************************************************************************
@@ -177,14 +186,16 @@ I hope I remember to fill this in before we submit the final copy!`);           
     runNetwork(data) {
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers.length; i++) {
-            currentLayer = this.layercomputers[i](currentLayer, this.layerbiases[i], this.layerweights[i]);
+            currentLayer = this.layercomputers[0][i](currentLayer, this.layerbiases[i], this.layerweights[i]);
+            currentLayer = this.layercomputers[1][i](currentLayer);
         }
         return currentLayer;
     }
     getNodeValues(data) {
         let nodeValues = [[data]]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
         for (let i = 0; i < this.layercomputers.length; i++) {
-            nodeValues.push(this.layercomputers[i](nodeValues[i], this.layerbiases[i], this.layerweights[i]));
+            nodeValues[i].push(this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i]));
+            nodeValues.push([this.layercomputers[1][i](nodeValues[i + 1][0])]);
         }
         return nodeValues;
     }
@@ -225,7 +236,7 @@ class DeepLearner {
         Example usage: DeepLearner.print();
     ******************************************************************************** */
     static print() { // Use console.log to print the contents of the class instead
-        console.log(`This is a placeholder description of the NeuralNetworks class
+        console.log(`This is a placeholder description of the DeepLearner class
 I hope I remember to fill this in before we submit the final copy!`);                                                                                                 // TODO
     }
 
@@ -299,8 +310,8 @@ I hope I remember to fill this in before we submit the final copy!`);           
     /* ********************************************************************************
       Everything below this point is unfinished                                                                                                 // TODO: Finish everything below this point, it really doesnt do much yet, and I have no idea how im going to do this yet
     ******************************************************************************** */
-    
-    
+
+
     trainOnce() {
         // Get the average gradient of all data points
         this.updateGradients();
@@ -311,11 +322,14 @@ I hope I remember to fill this in before we submit the final copy!`);           
         for (let i = 0; i < this.settings.batchsize; i++) {
             // Get the node values of each input
             let nodevalues = this.network.getNodeValues(this.trainingset[0][this.batchindex]);
+
+            // Calculate 
+
             // Calculate the gradients for all weights
             for (let j = 0; j < this.wgradients.length; j++) {
                 for (let k = 0; k < this.wgradients[j].length; k++) {
                     for (let l = 0; l < this.wgradients[j][k].length; l++) {
-                        this.wgradients[j][k][l] += 0; /// To scrap and replace
+                        this.wgradients[j][k][l] += 0;
                     }
                 }
             }
@@ -323,7 +337,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             let cost = this.network.Cost(nodevalues[nodevalues.length - 1], this.trainingset[1]);
             // Find gradient of last layer nodes
 
-
+            // Increment the index
             this.batchindex = (this.batchindex + 1) % this.trainingset.length;
         }
     }
