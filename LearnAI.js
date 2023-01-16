@@ -66,16 +66,14 @@ I hope I remember to fill this in before we submit the final copy!`);           
         }).setOutput([${this.layersizes[this.layersizes.length-1]}])`);
         this.hiddennodecomputers = [];
         for (let i = 1; i < this.layerbiases.length-1; i++) {
-            this.layercomputers[0].push(eval(`this.gpu.createKernel(function(weighted_inputs, biases, weights) {
-                function ${this.singleCost[1]}
+            this.layercomputers[0].push(eval(`this.gpu.createKernel(function(weights, weighted_inputs, outputNodes) {
                 function ${this.activation[1]}
                 let value = 0;
                 for (int i=0; i<${this.layersizes[i+1]}; i++)
                 {
-                    ;
+                    value += weights[this.thread.x][i] * outputNodes[i];
                 }
-                return ${this.singleCost[1].name}(outputs[this.thread.x],expected_outputs[this.thread.x]) 
-                    * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
+                return value * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
             }).setOutput([${this.layersizes[i]}])`));
         }
     }
