@@ -194,7 +194,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
         let nodeValues = [[null, data]];
         for (let i = 0; i < this.layercomputers[0].length; i++) {
             nodeValues.push([this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i])]);
-            nodeValues[i+1].push([this.layercomputers[1][i](nodeValues[i+1][0])]);
+            nodeValues[i + 1].push([this.layercomputers[1][i](nodeValues[i + 1][0])]);
         }
         return nodeValues;
     }
@@ -320,10 +320,10 @@ I hope I remember to fill this in before we submit the final copy!`);           
 
     /* ********************************************************************************
       This function will clear the gradient arrays and then calculate and add the gradient for a lot of datapoints
-      Together with the gpu programs, this is half the magic of deep learning
+      Together with the gpu programs, this is half the magic of deep learning (the other half is actually using the gradients)
       Example usage: N/A
     ******************************************************************************** */
-      updateGradients() {
+    updateGradients() {
         this.clearGradients();
         // For settings.batchsize amount of datapoints, calculate the gradients and add them (we will take the average later)
         for (let i = 0; i < this.settings.batchsize; i++) {
@@ -334,7 +334,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             let index = layerdata.length - 1; // Layer index
 
             // Calculate output layer gradients
-            let nodeValues = this.network.outputnodescomputer(layerdata[index+1][0], layerdata[index+1][1], this.trainingset[1][this.batchindex]);
+            let nodeValues = this.network.outputnodescomputer(layerdata[index + 1][0], layerdata[index + 1][1], this.trainingset[1][this.batchindex]);
             for (let j = 0; j < nodeValues.length; j++) {
                 // Calculate the gradients for weights
                 for (let k = 0; k < layerdata[index][1].length; k++) {
@@ -346,7 +346,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
 
             // Calculate hidden layer gradients
             for (index--; index >= 0; index--) {
-                nodeValues = this.network.hiddennodescomputers(this.network.layerweights[index], layerdata[index+1][0], nodeValues);
+                nodeValues = this.network.hiddennodescomputers(this.network.layerweights[index], layerdata[index + 1][0], nodeValues);
                 for (let j = 0; j < nodeValues.length; j++) {
                     // Calculate the gradients for weights
                     for (let k = 0; k < layerdata[index][1].length; k++) {
@@ -361,6 +361,10 @@ I hope I remember to fill this in before we submit the final copy!`);           
             this.batchindex = (this.batchindex + 1) % this.trainingset.length;
         }
     }
+    /* ********************************************************************************
+      This function will clear the gradient arrays
+      Example usage: N/A
+    ******************************************************************************** */
     clearGradients() {
         // Clear gradients
         for (let i = 0; i < this.wgradients.length; i++) {
@@ -372,21 +376,15 @@ I hope I remember to fill this in before we submit the final copy!`);           
             this.bgradients[i].fill(0);
         }
     }
-    //updateGradient(datapoint) {
 
-    /*
-    let cost;
-    let batchend = this.batchindex + this.settings.batchsize;
-    if (batchend > this.trainingset[0].length) {
-        // around the end, two calls to test data
-        cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, this.trainingset[0].length) + this.network.Cost(this.trainingset[0], this.trainingset[1], 0, batchend - this.trainingset[0].length);
+    /* ********************************************************************************
+      This function will use the gradients to train the network, using the gradient descent method
+      Using the gradients as a slope of a graph, our goal is to slide down the slope and find the lowest point on the graph
+      Example usage: N/A
+    ******************************************************************************** */
+    applyGradients() {
+        // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
+        let learnrate = this.settings.learnrate / this.settings.trainamount;
+
     }
-    else {
-        cost = this.network.Cost(this.trainingset[0], this.trainingset[1], this.batchindex, batchend);
-    }
-    // increase batchindex
-    this.batchindex = (this.batchindex + this.settings.batchsize) % this.trainingset[0].length;
-    // return cost
-    return cost;*/
-    //}
 }
