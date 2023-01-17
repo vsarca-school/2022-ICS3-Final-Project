@@ -385,6 +385,27 @@ I hope I remember to fill this in before we submit the final copy!`);           
     applyGradients() {
         // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
         let learnrate = this.settings.learnrate / this.settings.trainamount;
+        let weightDecay = (1 - learnrate);
 
+        // Apply weights
+        for (let i=0; i<this.wgradients.length; i++)
+        {
+            for (let j=0; j<this.wgradients[i].length; j++)
+            {
+                for (let k=0; k<this.wgradients[i][j].length; k++)
+                {
+                    this.network.layerweights[i][j][k] = this.network.layerweights[i][j][k] * weightDecay + this.wgradients[i][j][k] * learnrate;
+                }
+            }
+        }
+
+        // Apply biases
+        for (let i=0; i<this.bgradients.length; i++)
+        {
+            for (let j=0; j<this.bgradients[i].length; j++)
+            {
+                this.network.layerbiases[i][j] += this.bgradients[i][j] * learnrate;
+            }
+        }
     }
 }
