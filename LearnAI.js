@@ -58,18 +58,18 @@ I hope I remember to fill this in before we submit the final copy!`);           
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
         // Node computation functions (for backpropagation and gradient descent)
-        this.outputnodecomputer = eval(`this.gpu.createKernel(function(weighted_inputs, outputs, expected_outputs) {
+        this.outputnodescomputer = eval(`this.gpu.createKernel(function(weighted_inputs, outputs, expected_outputs) {
             function ${this.singleCost[1]}
             function ${this.activation[1]}
             return ${this.singleCost[1].name}(outputs[this.thread.x],expected_outputs[this.thread.x]) 
                 * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
-        }).setOutput([${this.layersizes[this.layersizes.length-1]}])`);
-        this.hiddennodecomputers = [];
-        for (let i = 1; i < this.layerbiases.length-1; i++) {
+        }).setOutput([${this.layersizes[this.layersizes.length - 1]}])`);
+        this.hiddennodescomputers = [];
+        for (let i = 1; i < this.layerbiases.length - 1; i++) {
             this.layercomputers[0].push(eval(`this.gpu.createKernel(function(weights, weighted_inputs, outputNodes) {
                 function ${this.activation[1]}
                 let value = 0;
-                for (int i=0; i<${this.layersizes[i+1]}; i++)
+                for (int i=0; i<${this.layersizes[i + 1]}; i++)
                 {
                     value += weights[this.thread.x][i] * outputNodes[i];
                 }
@@ -183,17 +183,18 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     runNetwork(data) {
         let currentLayer = data;
-        for (let i = 0; i < this.layercomputers.length; i++) {
+        for (let i = 0; i < this.layercomputers[0].length; i++) {
             currentLayer = this.layercomputers[0][i](currentLayer, this.layerbiases[i], this.layerweights[i]);
             currentLayer = this.layercomputers[1][i](currentLayer);
         }
         return currentLayer;
     }
-    getNodeValues(data) {
-        let nodeValues = [[data]]; //this.layercomputers[0](data, this.layerbiases[0], this.layerweights[0])];
-        for (let i = 0; i < this.layercomputers.length; i++) {
-            nodeValues[i].push(this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i]));
-            nodeValues.push([this.layercomputers[1][i](nodeValues[i + 1][0])]);
+    getAllValues(data) {
+        // nodeValues with store a bunch of pairs, one for every layer. The first item in the pair is the weighted inputs, and the second is the activations/outputs/inputs to next layer. Netowrk input has no weighted input
+        let nodeValues = [[null, data]];
+        for (let i = 0; i < this.layercomputers[0].length; i++) {
+            nodeValues.push([this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i])]);
+            nodeValues[i+1].push([this.layercomputers[1][i](nodeValues[i+1][0])]);
         }
         return nodeValues;
     }
@@ -306,34 +307,55 @@ I hope I remember to fill this in before we submit the final copy!`);           
     }
 
     /* ********************************************************************************
-      Everything below this point is unfinished                                                                                                 // TODO: Finish everything below this point, it really doesnt do much yet, and I have no idea how im going to do this yet
+      Most things below this point are unfinished                                                                                                 // TODO: Finish everything below this point, it really doesnt do much yet, and I have no idea how im going to do this yet
     ******************************************************************************** */
 
 
     trainOnce() {
         // Get the average gradient of all data points
         this.updateGradients();
+        this.applyGradients();
     }
-    updateGradients() {
+
+
+    /* ********************************************************************************
+      This function will clear the gradient arrays and then calculate and add the gradient for a lot of datapoints
+      Together with the gpu programs, this is half the magic of deep learning
+      Example usage: N/A
+    ******************************************************************************** */
+      updateGradients() {
         this.clearGradients();
-        // Run batchsize samples of the training data and calculate gradients
+        // For settings.batchsize amount of datapoints, calculate the gradients and add them (we will take the average later)
         for (let i = 0; i < this.settings.batchsize; i++) {
             // Get the node values of each input
-            let nodevalues = this.network.getNodeValues(this.trainingset[0][this.batchindex]);
+            let layerdata = this.network.getAllValues(this.trainingset[0][this.batchindex]);
 
-            // Calculate 
+            // Backpropagation
+            let index = layerdata.length - 1; // Layer index
 
-            // Calculate the gradients for all weights
-            for (let j = 0; j < this.wgradients.length; j++) {
-                for (let k = 0; k < this.wgradients[j].length; k++) {
-                    for (let l = 0; l < this.wgradients[j][k].length; l++) {
-                        this.wgradients[j][k][l] += 0;
+            // Calculate output layer gradients
+            let nodeValues = this.network.outputnodescomputer(layerdata[index+1][0], layerdata[index+1][1], this.trainingset[1][this.batchindex]);
+            for (let j = 0; j < nodeValues.length; j++) {
+                // Calculate the gradients for weights
+                for (let k = 0; k < layerdata[index][1].length; k++) {
+                    this.wgradients[index][j][k] += layerdata[index][1][k] * nodeValues[j];
+                }
+                // Calculate the gradient for bias
+                this.bgradients[index][j] += nodeValues[j];
+            }
+
+            // Calculate hidden layer gradients
+            for (index--; index >= 0; index--) {
+                nodeValues = this.network.hiddennodescomputers(this.network.layerweights[index], layerdata[index+1][0], nodeValues);
+                for (let j = 0; j < nodeValues.length; j++) {
+                    // Calculate the gradients for weights
+                    for (let k = 0; k < layerdata[index][1].length; k++) {
+                        this.wgradients[index][j][k] += layerdata[index][1][k] * nodeValues[j];
                     }
+                    // Calculate the gradient for bias
+                    this.bgradients[index][j] += nodeValues[j];
                 }
             }
-            // Find the cost
-            let cost = this.network.Cost(nodevalues[nodevalues.length - 1], this.trainingset[1]);
-            // Find gradient of last layer nodes
 
             // Increment the index
             this.batchindex = (this.batchindex + 1) % this.trainingset.length;
