@@ -42,6 +42,15 @@ I hope I remember to fill this in before we submit the final copy!`);           
             }
         }
 
+        // "The debug zone"
+        console.log(`this.gpu.createKernel(function(inputs, biases, weights) {
+            let sum = biases[this.thread.x];
+            for (let i = 0; i < ${this.layersizes[0]}; i++) {
+                sum += inputs[i]*weights[i][this.thread.x];
+            }
+            return sum;
+        }).setOutput([${this.layersizes[0 + 1]}])`);
+
         // Layer computation functions ( Note to self: if you print this array, everything will magically stop working )
         this.layercomputers = [[], []];
         for (let i = 0; i < this.layerbiases.length; i++) {
@@ -182,20 +191,29 @@ I hope I remember to fill this in before we submit the final copy!`);           
       Example usage: N/A
     ******************************************************************************** */
     runNetwork(data) {
+        console.log("Begin runNetwork");
         let currentLayer = data;
         for (let i = 0; i < this.layercomputers[0].length; i++) {
+            console.log(currentLayer);
             currentLayer = this.layercomputers[0][i](currentLayer, this.layerbiases[i], this.layerweights[i]);
+            console.log(currentLayer);
             currentLayer = this.layercomputers[1][i](currentLayer);
         }
+        console.log("End runNetwork");
         return currentLayer;
     }
     getAllValues(data) {
+        console.log("Begin getAllValues");
         // nodeValues with store a bunch of pairs, one for every layer. The first item in the pair is the weighted inputs, and the second is the activations/outputs/inputs to next layer. Netowrk input has no weighted input
         let nodeValues = [[null, data]];
         for (let i = 0; i < this.layercomputers[0].length; i++) {
-            nodeValues.push([this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i])]);
-            nodeValues[i + 1].push([this.layercomputers[1][i](nodeValues[i + 1][0])]);
+            nodeValues.push([null, null]);
+            console.log(nodeValues);
+            nodeValues[i + 1][0] = this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i]);
+            console.log(nodeValues);
+            nodeValues[i + 1][1] = this.layercomputers[1][i](nodeValues[i + 1][0]);
         }
+        console.log("End getAllValues");
         return nodeValues;
     }
 
@@ -253,7 +271,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
 
         // Fill the two sets using the batchSplit setting
         let trainamount = dataset[0].length * 0.8; // default setting
-        if (settings.hasOwnProperty("batchsplit")) trainamount = dataset[0].length * settings.batchSplit;
+        if (settings.hasOwnProperty("batchsplit")) trainamount = dataset[0].length * settings.batchsplit;
 
         for (let i = 0; i < trainamount; i++) {
             this.trainingset[0].push(dataset[0][i]);                                                                    // TODO: there must be a more efficient way to split arrays
@@ -298,7 +316,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     /* ********************************************************************************
       This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
       This function is here for training until done
-      Example usage: let trainer = train(2000);
+      Example usage: let trainer = dl.train(2000);
     ******************************************************************************** */
     train(milliseconds) {
         // Loop
@@ -328,10 +346,12 @@ I hope I remember to fill this in before we submit the final copy!`);           
         // For settings.batchsize amount of datapoints, calculate the gradients and add them (we will take the average later)
         for (let i = 0; i < this.settings.batchsize; i++) {
             // Get the node values of each input
+            console.log("Data point is", this.trainingset);
             let layerdata = this.network.getAllValues(this.trainingset[0][this.batchindex]);
+            console.log("Layer data is", layerdata);
 
             // Backpropagation
-            let index = layerdata.length - 1; // Layer index
+            let index = layerdata.length - 2; // Layer index
 
             // Calculate output layer gradients
             let nodeValues = this.network.outputnodescomputer(layerdata[index + 1][0], layerdata[index + 1][1], this.trainingset[1][this.batchindex]);
@@ -388,22 +408,17 @@ I hope I remember to fill this in before we submit the final copy!`);           
         let weightDecay = (1 - learnrate);
 
         // Apply weights
-        for (let i=0; i<this.wgradients.length; i++)
-        {
-            for (let j=0; j<this.wgradients[i].length; j++)
-            {
-                for (let k=0; k<this.wgradients[i][j].length; k++)
-                {
+        for (let i = 0; i < this.wgradients.length; i++) {
+            for (let j = 0; j < this.wgradients[i].length; j++) {
+                for (let k = 0; k < this.wgradients[i][j].length; k++) {
                     this.network.layerweights[i][j][k] = this.network.layerweights[i][j][k] * weightDecay + this.wgradients[i][j][k] * learnrate;
                 }
             }
         }
 
         // Apply biases
-        for (let i=0; i<this.bgradients.length; i++)
-        {
-            for (let j=0; j<this.bgradients[i].length; j++)
-            {
+        for (let i = 0; i < this.bgradients.length; i++) {
+            for (let j = 0; j < this.bgradients[i].length; j++) {
                 this.network.layerbiases[i][j] += this.bgradients[i][j] * learnrate;
             }
         }
