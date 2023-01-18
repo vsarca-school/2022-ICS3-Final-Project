@@ -25,20 +25,21 @@ I hope I remember to fill this in before we submit the final copy!`);           
 
         // Layer sizes
         this.layersizes = [layer1, layer2].concat(otherLayers);
-
-        // Layer biases
-        this.layerbiases = Array(this.layersizes.length - 1);
-        for (let i = 0; i < this.layerbiases.length; i++) {
-            this.layerbiases[i] = Array(this.layersizes[i + 1]);
-        }
+        this.totallayers = this.layersizes.length-1; // Number of layers
 
         // Layer weights
-        this.layerweights = Array(this.layersizes.length - 1);
-        for (let i = 0; i < this.layerweights.length; i++) {
+        this.layerweights = Array(this.totallayers);
+        for (let i = 0; i < this.totallayers; i++) {
             this.layerweights[i] = Array(this.layersizes[i]);
             for (let j = 0; j < this.layersizes[i]; j++) {
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
+        }
+
+        // Layer biases
+        this.layerbiases = Array(this.totallayers);
+        for (let i = 0; i < this.totallayers; i++) {
+            this.layerbiases[i] = Array(this.layersizes[i + 1]);
         }
     }
     /* ********************************************************************************
@@ -49,7 +50,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     generateGPU() {
         // Layer computation functions ( Note to self: if you print this array, everything will magically stop working )
         this.layercomputers = [[], []];
-        for (let i = 0; i < this.layerbiases.length; i++) {
+        for (let i = 0; i < this.totallayers; i++) {
             // inputs => weighted_inputs
             this.layercomputers[0].push(eval(`this.gpu.createKernel(function(inputs, biases, weights) {
                 let sum = biases[this.thread.x];
@@ -75,16 +76,16 @@ I hope I remember to fill this in before we submit the final copy!`);           
         }).setOutput([${this.layersizes[this.layersizes.length - 1]}])`);
         // outputs => inputs
         this.hiddennodescomputers = [];
-        for (let i = 1; i < this.layersizes.length; i++) {
+        for (let i = 0; i < this.totallayers; i++) {
             this.hiddennodescomputers.push(eval(`this.gpu.createKernel(function(weights, weighted_inputs, outputNodes) {
                 function ${this.activation[1]}
                 let value = 0;
-                for (let i=0; i<${this.layersizes[i]}; i++)
+                for (let i=0; i<${this.layersizes[i + 1]}; i++)
                 {
                     value += weights[this.thread.x][i] * outputNodes[i];
                 }
                 return value * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
-            }).setOutput([${this.layersizes[i - 1]}])`));
+            }).setOutput([${this.layersizes[i]}])`));
         }
 
         return this;
@@ -94,16 +95,16 @@ I hope I remember to fill this in before we submit the final copy!`);           
       Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
     ******************************************************************************** */
     randomize() {
-        for (let i = 0; i < this.layerbiases.length; i++) {
-            for (let j = 0; j < this.layersizes[i + 1]; j++) {
-                this.layerbiases[i][j] = Math.random();
-            }
-        }
-        for (let i = 0; i < this.layerweights.length; i++) {
+        for (let i = 0; i < this.totallayers; i++) {
             for (let j = 0; j < this.layersizes[i]; j++) {
                 for (let k = 0; k < this.layersizes[i + 1]; k++) {
                     this.layerweights[i][j][k] = Math.random();
                 }
+            }
+        }
+        for (let i = 0; i < this.totallayers; i++) {
+            for (let j = 0; j < this.layersizes[i + 1]; j++) {
+                this.layerbiases[i][j] = Math.random();
             }
         }
         return this;
@@ -122,7 +123,6 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     saveToFile(file) {                                                                                                 // TODO
         //let layersizes = file.
-        return this;
     }
 
     /* ********************************************************************************
@@ -201,7 +201,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     runNetwork(data) {
         let currentLayer = data;
-        for (let i = 0; i < this.layercomputers[0].length; i++) {
+        for (let i = 0; i < this.totallayers; i++) {
             currentLayer = this.layercomputers[0][i](currentLayer, this.layerbiases[i], this.layerweights[i]);
             currentLayer = this.layercomputers[1][i](currentLayer);
         }
@@ -210,7 +210,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     getAllValues(data) {
         // nodeValues with store a bunch of pairs, one for every layer. The first item in the pair is the weighted inputs, and the second is the activations/outputs/inputs to next layer. Netowrk input has no weighted input
         let nodeValues = [[null, data]];
-        for (let i = 0; i < this.layercomputers[0].length; i++) {
+        for (let i = 0; i < this.totallayers; i++) {
             nodeValues.push([null, null]); // For clarity
             console.log("Errorful input is", nodeValues[i][1], this.layerbiases[i], this.layerweights[i]);
             nodeValues[i + 1][0] = this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i]);
@@ -269,26 +269,28 @@ I hope I remember to fill this in before we submit the final copy!`);           
     constructor(network, dataset, settings) {
         // Variables
         this.network = network;
+        this.totallayers = this.network.totallayers;
+        this.totaldata = this.dataset[0].length;
         this.trainingset = [[], []];
         this.testingset = [[], []];
+        this.batchindex = 0;
+
+        // Settings
+        this.settings = settings;
+        if (!this.settings.hasOwnProperty("learnrate")) this.settings.learnrate = 0.1;
+        this.trainamount = this.totaldata * 0.8; // default setting
+        if (this.settings.hasOwnProperty("batchsplit")) this.trainamount = this.totaldata * this.settings.batchsplit;
+        if (!this.settings.hasOwnProperty("batchsize")) this.settings.batchsize = 100;
 
         // Fill the two sets using the batchSplit setting
-        let trainamount = dataset[0].length * 0.8; // default setting
-        if (settings.hasOwnProperty("batchsplit")) trainamount = dataset[0].length * settings.batchsplit;
-
-        for (let i = 0; i < trainamount; i++) {
+        for (let i = 0; i < this.trainamount; i++) {
             this.trainingset[0].push(dataset[0][i]);                                                                    // TODO: there must be a more efficient way to split arrays
             this.trainingset[1].push(dataset[1][i]);
         }
-        for (let i = trainamount; i < dataset[0].length; i++) {
+        for (let i = this.trainamount; i < this.totaldata; i++) {
             this.testingset[0].push(dataset[0][i]);
             this.testingset[1].push(dataset[1][i]);
         }
-
-        // More variables
-        this.settings = settings;
-        if (!settings.hasOwnProperty("batchsize")) this.settings.batchsize = 100;
-        this.batchindex = 0;
 
         // Weight gradients
         this.wgradients = Array(this.network.layerweights.length);
@@ -311,7 +313,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
       Example usage: let dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
     ******************************************************************************** */
     static defaultSettings = {
-        learnrate: 1, // for gradient descent
+        learnrate: 0.1, // for gradient descent
         batchsize: 100, // give it 100 samples at a time                                                                                                 // TODO: Make these comments
         batchsplit: 0.8 // 80% used, 20% saved for testing its learning on never before seen data
     }
@@ -412,7 +414,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     applyGradients() {
         // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
-        let learnrate = this.settings.learnrate / this.settings.trainamount;
+        let learnrate = this.settings.learnrate / this.trainamount;
         let weightDecay = (1 - learnrate);
 
         // Apply weights
