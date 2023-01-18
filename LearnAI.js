@@ -35,6 +35,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
                 this.layerweights[i][j] = Array(this.layersizes[i + 1]);
             }
         }
+        console.log(this.layersizes, this.layerweights);
 
         // Layer biases
         this.layerbiases = Array(this.totallayers);
@@ -269,14 +270,14 @@ I hope I remember to fill this in before we submit the final copy!`);           
     constructor(network, dataset, settings) {
         // Variables
         this.network = network;
+        this.settings = settings;
         this.totallayers = this.network.totallayers;
-        this.totaldata = this.dataset[0].length;
+        this.totaldata = dataset[0].length;
         this.trainingset = [[], []];
         this.testingset = [[], []];
         this.batchindex = 0;
 
         // Settings
-        this.settings = settings;
         if (!this.settings.hasOwnProperty("learnrate")) this.settings.learnrate = 0.1;
         this.trainamount = this.totaldata * 0.8; // default setting
         if (this.settings.hasOwnProperty("batchsplit")) this.trainamount = this.totaldata * this.settings.batchsplit;
@@ -418,10 +419,10 @@ I hope I remember to fill this in before we submit the final copy!`);           
         let weightDecay = (1 - learnrate);
 
         // Apply weights
+                    console.log("Weights and gradients are", this.network.layerweights, this.wgradients);
         for (let i = 0; i < this.wgradients.length; i++) {
             for (let j = 0; j < this.wgradients[i].length; j++) {
                 for (let k = 0; k < this.wgradients[i][j].length; k++) {
-                    console.log("Weights and gradients are", this.network.layerweights[i][j][k], this.wgradients[i][j][k]);
                     this.network.layerweights[i][j][k] = this.network.layerweights[i][j][k] * weightDecay + this.wgradients[i][j][k] * learnrate;
                 }
             }
