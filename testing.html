@@ -63,13 +63,15 @@
 
         NeuralNetwork.print();
 
-        nn = new NeuralNetwork(2, 3, 2).randomize();
+        nn = new NeuralNetwork(2, 3, 2).randomize().generateGPU();
         console.log(nn.runNetwork(dataset[0][0]));
         
         DeepLearner.print();
 
         dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
         //dl.train(3000);
+        dl.trainOnce();
+        dl.trainOnce();
         dl.trainOnce();
     </script>
 </head>
