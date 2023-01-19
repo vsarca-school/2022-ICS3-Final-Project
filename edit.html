@@ -3,69 +3,74 @@
 <link rel="stylesheet" href="style.css">
 <head>
     <title>LearnAI.js - Editor</title>
-    <script>
-        document.onload = (event) => {
-            console.log("thiung");
-            let temp = document.getElementById("card");
-            const card = temp.cloneNode(true).removeAttribute("id");
-            temp.remove();
-
-            temp = document.getElementById("empty");
-            const empty = temp.cloneNode(true).removeAttribute("id");
-            temp.remove();
-            temp = document.getElementById("Image Editor");
-            const image_editor= temp.cloneNode(true).removeAttribute("id"); 
-            temp.remove();
-            temp = document.getElementById("Code Editor");
-            const code_editor= temp.cloneNode(true).removeAttribute("id"); 
-            temp.remove();
-        }
-    </script>
 </head>
 <body class="noMargin">
+    <script>
+        var card;
+        var table;
+
+        var empty;
+        var image_editor;
+        var code_editor;
+        document.body.onload = function (event) {
+            let temp = document.getElementById("card");
+            card = temp.cloneNode(true);
+            card.removeAttribute("id");
+            temp.remove();
+
+            table = document.getElementById("card-holder");
+
+            temp = document.getElementById("empty");
+            empty = temp.cloneNode(true);
+            empty.removeAttribute("id");
+            temp.remove();
+            temp = document.getElementById("Image Editor");
+            image_editor= temp.cloneNode(true);
+            image_editor.removeAttribute("id"); 
+            temp.remove();
+            temp = document.getElementById("Code Editor");
+            code_editor= temp.cloneNode(true);
+            code_editor.removeAttribute("id"); 
+            temp.remove();
+        }
+
+        function plusButton() {
+            let newNode = card.cloneNode(true);
+            table.appendChild(newNode);
+            let newScript = document.createElement("script");
+            newScript.src = "card.js";
+            newNode.appendChild(newScript);
+        }
+
+        function remove(el) {
+            el.parentElement.parentElement.remove();
+        }
+    </script>
+
     <div class="topBar">
         <a href="index.html"><button class="arrow"><<</button></a>
-        <button class="plus">+</button>
+        <button class="plus" onclick="plusButton()">+</button>
     </div>
     <div>
-        <table id="card-holder">
-            <tr>
+        <table>
+            <tr id="card-holder">
                 <td id="card">
-                    <select name="selection">
-                        <option value="empty"></option>
-                        <option value="Image Editor">Image Editor</option>
-                        <option value="Code Editor">Code Editor</option>
-                    </select>
-                    <script>
-                        document.onload = () => {
-                            const select = document.getElementById("selection");
-                            const td = document.currentScript.parentElement;
-                            let content = td.lastElementChild;
-                            select.addEventListener('change', (event) => {
-                                // Selected thing is event.target.value
-                                switch(event.target.value) {
-                                case "empty":
-                                    td.replaceChild(content, empty);
-                                    break;
-                                case "Image Editor":
-                                    td.replaceChild(content, image_editor);
-                                    break;
-                                case "Code Editor":
-                                    td.replaceChild(content, code_editor);
-                                    break;
-                                }
-                                content = td.lastElementChild;
-                            });
-                        }
-                    </script>
-                    <div></div>
+                    <div>
+                        <select id="selection">
+                            <option value="empty"></option>
+                            <option value="Image Editor">Image Editor</option>
+                            <option value="Code Editor">Code Editor</option>
+                        </select>
+                        <button onclick="remove(this)">X</button>
+                    </div>
+                    <div class="content"></div>
                 </td>
             </tr>
         </table>
 
-        <div id="empty"></div>
-        <div id="Image Editor">Image Editor</div>
-        <div id="Code Editor">Code Editor</div>
+        <div class="content" id="empty"></div>
+        <div class="content" id="Image Editor">Image Editor</div>
+        <div class="content" id="Code Editor">Code Editor</div>
     </div>
 </body>
 </html>
