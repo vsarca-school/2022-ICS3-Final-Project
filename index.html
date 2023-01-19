@@ -12,7 +12,8 @@
 
         if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
         let intervalID = setInterval(draw, 10);
-        ctx.font = "bold 0.9vw Courier";
+        ctx.font = "bold 1.5vh Courier";
+        let charHeight = ctx.measureText("M").width;
         let a = 2;
         let h = 0;
         function graph(n) {
@@ -40,7 +41,7 @@
             ctx.fillStyle = "#7D9DDF";
             for (let i = 0; i < canvas.width/10; i++) {
                 for (let j = 0; j < textarr[0].length; j++) {
-                    if (10+j*10 < canvas.height/2-graph(i*10) && 20+j*10 > canvas.height/2-graph(i*10)) {
+                    if (j*10 < canvas.height/2-graph(i*10) && 1.25*charHeight+j*10 > canvas.height/2-graph(i*10)) {
                         ctx.fillText(textarr[i].charAt(j), i*10, 10+j*10);
                     }
                 }

@@ -45,13 +45,13 @@
     <script src="LearnAI.js"></script>
     <script>
         // We will eventually get our digits from here: https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
-        dataset = [[], []];
-        for (let i=0; i<1000; i++)
+        dataset = [[[1,1]], [[0,1]]];
+        for (let i=0; i<999; i++)
         {
             let x = Math.random();
             let y = Math.random();
             dataset[0].push([x,y]);
-            if (x*x + y*y < 10)
+            if (x + y < 1)
             {
                 dataset[1].push([1,0]); //safe
             }
@@ -61,16 +61,35 @@
             }
         }
 
-        NeuralNetwork.print();
+        function myActivation(x) {
+            //return x>1 ? 1 : 0;
+            return x;
+        }
+        function myDerivative(y) {
+            return 1;
+        }
 
-        nn = new NeuralNetwork(2, 3, 2).randomize();
+        //NeuralNetwork.print();
+
+        nn = new NeuralNetwork(2, 2).randomize().generateGPU(); // .setActivationFunction(myActivation, myDerivative)
+        nn.layerweights = [[[1,0], [1,0]]];
+        nn.layerbiases = [[1,0]];
+
+        console.log(nn.layerweights, nn.layerbiases);
+
         console.log(nn.runNetwork(dataset[0][0]));
         
-        DeepLearner.print();
+        //DeepLearner.print();
 
-        //t = new DeepLearner(n, dataset, DeepLearner.defaultSettings);
-        //t.train(1000);
-        //t.trainOnce();
+        dl = new DeepLearner(nn, dataset, { learnrate: 0.5, batchsize: 100, batchsplit: 0.8 });
+        
+        //console.log("Network gets", dl.countAll(), "/ 1000 test cases correct");
+        //dl.train(1000);
+        //let tester = setInterval(function () { console.log("Network gets", dl.countAll(), "/ 1000 test cases correct"); }, 10000);
+        //let printer = setInterval(function () { console.log("Weights:", nn.layerweights, ", Biases:", nn.layerbiases); }, 10000);
+        dl.trainOnce();
+        //dl.trainOnce();
+        //dl.trainOnce();
     </script>
 </head>
 
