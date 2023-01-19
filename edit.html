@@ -3,6 +3,11 @@
 <link rel="stylesheet" href="style.css">
 <head>
     <title>LearnAI.js - Editor</title>
+    <script>
+        const empty = cloneNode(document.getElementById("empty")).removeAttribute("id"); 
+        const image_editor= cloneNode(document.getElementById("Image Editor")).removeAttribute("id"); 
+        const code_editor= cloneNode(document.getElementById("Code Editor")).removeAttribute("id"); 
+    </script>
 </head>
 <body class="noMargin">
     <div class="topBar">
@@ -14,9 +19,31 @@
             <tr>
                 <td name="card" class="card">
                     <select name="selection">
+                        <option value="empty"></option>
                         <option value="Image Editor">Image Editor</option>
                         <option value="Code Editor">Code Editor</option>
                     </select>
+                    <script>
+                        const select = document.getElementById("selection");
+                        const td = document.currentScript.parentElement;
+                        let content = td.lastElementChild;
+                        select.addEventListener('change', (event) => {
+                            // Selected thing is event.target.value
+                            switch(event.target.value) {
+                            case "empty":
+                                td.replaceChild(content, empty);
+                                break;
+                            case "Image Editor":
+                                td.replaceChild(content, image_editor);
+                                break;
+                            case "Code Editor":
+                                td.replaceChild(content, code_editor);
+                                break;
+                            }
+                            content = td.lastElementChild;
+                        })
+                    </script>
+                    <div></div>
                 </td>
             </tr>
         </table>
