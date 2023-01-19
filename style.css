@@ -72,16 +72,42 @@ a:onclick {
 
 .topBar {
     width: 100vw;
-    height: 6vh;
+    height: 7vh;
     color: #09073a;
 }
 
-#arrow {
+.arrow {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    text-align: center;
     margin-left: 7px;
-    width: 6vh;
-    height: 6vh;
+    font-size: 5vh;
+    font-stretch: ultra-condensed;
+    width: 7vh;
+    height: 7vh;
+    border: none;
+    background-color: transparent;
     transition-duration: 0.5s;
 }
-#arrow:hover {
+.arrow:hover {
     transform: translateX(-10px);
+}
+
+.plus {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    text-align: center;
+    margin-left: 7px;
+    font-size: 5vh;
+    font-stretch: ultra-condensed;
+    width: 7vh;
+    height: 7vh;
+    border: none;
+    border-radius: 1vh;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+.plus:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
 }
