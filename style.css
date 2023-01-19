@@ -3,7 +3,7 @@
     src: url(Fester_Trial-Book.woff);
 }
 
-body {
+.background {
     background-color: #09073a;
     color: #fcfcfc;
     margin: 0;
@@ -70,10 +70,17 @@ a:onclick {
     color: #fcfcfc;
 }
 
+.noMargin {
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
 .topBar {
+    background-color: #09073a;
     width: 100vw;
     height: 7vh;
-    color: #09073a;
 }
 
 .arrow {
