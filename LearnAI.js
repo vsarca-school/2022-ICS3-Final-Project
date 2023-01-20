@@ -9,7 +9,8 @@ function defaultCostDerivative(output, expected) {
 function sigmoid(x) {
     return 1 / (1 + Math.exp(-x));
 }
-function sigmoidDerivative(y) {
+function sigmoidDerivative(x) {
+    let y = 1 / (1 + Math.exp(-x));
     return y * (1 - y);
 }
 
@@ -112,14 +113,15 @@ I hope I remember to fill this in before we submit the final copy!`);           
     randomize() {
         for (let i = 0; i < this.totallayers; i++) {
             for (let j = 0; j < this.layersizes[i]; j++) {
+                let sqrt = Math.sqrt(this.layersizes[i]);
                 for (let k = 0; k < this.layersizes[i + 1]; k++) {
-                    this.layerweights[i][j][k] = Math.random();
+                    this.layerweights[i][j][k] = Math.random()/sqrt;
                 }
             }
         }
         for (let i = 0; i < this.totallayers; i++) {
             for (let j = 0; j < this.layersizes[i + 1]; j++) {
-                this.layerbiases[i][j] = Math.random();
+                this.layerbiases[i][j] = Math.random()/Math.sqrt(this.layersizes[i]);
             }
         }
         return this;
@@ -157,7 +159,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
       This function calculates the total cost of the network's output, not for user
       Example usage: N/A
     ******************************************************************************** */
-    totalCost(output, expected) {
+    averageCost(output, expected) {
         /*let cost = [];
         for (let i = 0; i < output.length; i++) {
             cost.push(this.singleCost[0](output[i], expected[i]));
@@ -167,7 +169,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
         for (let i = 0; i < output.length; i++) {
             cost += this.singleCost[0](output[i], expected[i]);
         }
-        return cost;
+        return cost/output.length;
     }
 
     /* ********************************************************************************
@@ -277,12 +279,15 @@ I hope I remember to fill this in before we submit the final copy!`);           
         this.trainingset = [[], []];
         this.testingset = [[], []];
         this.batchindex = 0;
+        this.totalcorrect = 0; // To track total correct every epoch
+        this.incorrectguessesprinted = 0; // Every epoch we print the first 10 mistakes
 
         // Settings
         if (!this.settings.hasOwnProperty("learnrate")) this.settings.learnrate = 0.1;
         this.trainamount = this.totaldata * 0.8; // default setting
         if (this.settings.hasOwnProperty("batchsplit")) this.trainamount = this.totaldata * this.settings.batchsplit;
         if (!this.settings.hasOwnProperty("batchsize")) this.settings.batchsize = 100;
+        if (!this.settings.hasOwnProperty("maxIncorrectGuessesToPrint")) this.settings.maxIncorrectGuessesToPrint = 10;
 
         // Fill the two sets using the batchSplit setting
         for (let i = 0; i < this.trainamount; i++) {
@@ -317,7 +322,8 @@ I hope I remember to fill this in before we submit the final copy!`);           
     static defaultSettings = {
         learnrate: 0.1, // for gradient descent
         batchsize: 100, // give it 100 samples at a time                                                                                                 // TODO: Make these comments
-        batchsplit: 0.8 // 80% used, 20% saved for testing its learning on never before seen data
+        batchsplit: 0.8, // 80% used, 20% saved for testing its learning on never before seen data
+        maxIncorrectGuessesToPrint: 1 // Print the first X incorrect guesses
     }
 
     /* ********************************************************************************
@@ -398,11 +404,23 @@ I hope I remember to fill this in before we submit the final copy!`);           
             // Get the node values of each input
             let layerdata = this.network.getAllValues(this.trainingset[0][this.batchindex]); // Length is this.totallayers + 1
 
-            cost += this.network.totalCost(layerdata[layerdata.length - 1][1], this.trainingset[1][this.batchindex]);
+            // Track cost and see if the network is correct, for statistics
+            cost += this.network.averageCost(layerdata[layerdata.length - 1][1], this.trainingset[1][this.batchindex]);
+            let largest = 0;
+            let index = this.totallayers - 1; // Layer index, used later for backpropagation
+            for (let i=1; i<layerdata[index+1][1].length; i++)
+            {
+                if (layerdata[index+1][1][i] > layerdata[index+1][1][largest])
+                    largest = i;
+            }
+            if (largest == this.trainingset[1][this.batchindex]) this.totalcorrect++;
+            else if (this.incorrectguessesprinted < this.settings.maxIncorrectGuessesToPrint)
+            {
+                this.incorrectguessesprinted++;
+                console.log("Incorrect guess", this.incorrectguessesprinted+", network guessed", layerdata[index+1][1], "for", this.trainingset[1][this.batchindex]+", biggest is", largest);
+            }
 
             // Backpropagation begins
-            let index = this.totallayers - 1; // Layer index
-
             // Calculate output layer gradients
             let nodevalues = this.network.outputnodescomputer(layerdata[index + 1][0], layerdata[index + 1][1], this.trainingset[1][this.batchindex]);
             for (let j = 0; j < nodevalues.length; j++) {
@@ -428,10 +446,17 @@ I hope I remember to fill this in before we submit the final copy!`);           
             }
 
             // Increment the index
-            this.batchindex = (this.batchindex + 1) % this.trainingset.length;
+            this.batchindex++;
+            if (this.batchindex == this.trainingset[0].length)
+            {
+                console.log("Epoch complete, network guessed", this.totalcorrect, "/", this.trainingset[0].length, "correct");
+                this.batchindex = 0;
+                this.totalcorrect = 0;
+                this.incorrectguessesprinted = 0;
+            }
         }
 
-        console.log("Total cost on data is", cost);
+        console.log("Average cost on data is", cost/this.settings.batchsize);
     }
     /* ********************************************************************************
       This function will clear the gradient arrays
@@ -457,13 +482,14 @@ I hope I remember to fill this in before we submit the final copy!`);           
     applyGradients() {                                                                                                                              // TODO: this method screws up the weights because the gradients are screwed up
         // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
         let learnrate = this.settings.learnrate / this.trainamount;
-        let weightDecay = (1 - learnrate);
+        let regularization = 0.1;
+        let weightDecay = (1 - regularization*learnrate);
 
         // Apply weights
         for (let i = 0; i < this.wgradients.length; i++) {
             for (let j = 0; j < this.wgradients[i].length; j++) {
                 for (let k = 0; k < this.wgradients[i][j].length; k++) {
-                    this.network.layerweights[i][j][k] = this.wgradients[i][j][k] * learnrate; //this.network.layerweights[i][j][k] * weightDecay + this.wgradients[i][j][k] * learnrate;
+                    this.network.layerweights[i][j][k] = this.network.layerweights[i][j][k] * weightDecay - this.wgradients[i][j][k] * learnrate;
                 } 
             }
         }

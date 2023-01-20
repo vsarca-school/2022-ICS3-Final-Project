@@ -43,51 +43,68 @@
     </script>
 
     <script src="LearnAI.js"></script>
+    <script src="mnist_784_json - 19k.json"></script>
     <script>
         // We will eventually get our digits from here: https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
-        dataset = [[[1,1]], [[0,1]]];
-        for (let i=0; i<999; i++)
+
+        let dataset=[[], []];
+        for (let i=0; i<10000; i++)
         {
-            let x = Math.random();
-            let y = Math.random();
-            dataset[0].push([x,y]);
-            if (x + y < 1)
+            // answer
+            dataset[1].push([0,0,0,0,0,0,0,0,0,0]);
+            dataset[1][i][data[i].class] = 1;
+            
+            // image
+            dataset[0].push([]);
+            for (let j=1; j<=784; j++)
             {
-                dataset[1].push([1,0]); //safe
-            }
-            else
-            {
-                dataset[1].push([0,1]); // poisonous
+                dataset[0][i].push(data[i]["pixel"+j.toString()]/255);
             }
         }
 
-        function myActivation(x) {
-            //return x>1 ? 1 : 0;
-            return x;
-        }
-        function myDerivative(y) {
-            return 1;
+        // For rendering our dataset in the console
+        let imagenumber = 0;
+        function drawImage() {
+            let image = "";
+            for (let i=0; i<28; i++)
+            {
+                for (let j=0; j<28; j++)
+                {
+                    let value = dataset[0][imagenumber][28*i + j];
+                    if (value < 0.19)
+                        image += " ";
+                    else if (value < 0.38)
+                        image += ".";
+                    else if (value < 0.57)
+                        image += "-";
+                    else if (value < 0.76)
+                        image += "*";
+                    else if (value < 0.95)
+                        image += "?";
+                    else
+                        image += "#";
+                }
+                image += "\n";
+            }
+            console.log(image, "Answer is", data[imagenumber].class);
+            imagenumber++;
         }
 
         //NeuralNetwork.print();
 
-        nn = new NeuralNetwork(2, 2).randomize().generateGPU(); // .setActivationFunction(myActivation, myDerivative)
-        nn.layerweights = [[[1,0], [1,0]]];
-        nn.layerbiases = [[1,0]];
+        nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
 
-        console.log(nn.layerweights, nn.layerbiases);
-
-        console.log(nn.runNetwork(dataset[0][0]));
+        console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
         
         //DeepLearner.print();
 
-        dl = new DeepLearner(nn, dataset, { learnrate: 0.5, batchsize: 100, batchsplit: 0.8 });
+        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 400, batchsplit: 0.8, maxIncorrectGuessesToPrint: 0 });
         
         //console.log("Network gets", dl.countAll(), "/ 1000 test cases correct");
-        //dl.train(1000);
+        dl.train(1000);
         //let tester = setInterval(function () { console.log("Network gets", dl.countAll(), "/ 1000 test cases correct"); }, 10000);
         //let printer = setInterval(function () { console.log("Weights:", nn.layerweights, ", Biases:", nn.layerbiases); }, 10000);
-        dl.trainOnce();
+        //dl.trainOnce();
         //dl.trainOnce();
         //dl.trainOnce();
     </script>
