@@ -6,13 +6,43 @@ function defaultCost(output, expected) {
 function defaultCostDerivative(output, expected) {
     return 2 * (output - expected);
 }
-function sigmoid(x) {
+
+function Sigmoid(x) {
     return 1 / (1 + Math.exp(-x));
 }
-function sigmoidDerivative(x) {
+function SigmoidDerivative(x) {
     let y = 1 / (1 + Math.exp(-x));
     return y * (1 - y);
 }
+
+function TanH(x) {
+    let e2 = Exp(2 * x);
+    return (e2 - 1) / (e2 + 1);
+}
+function TanHDerivative(x) {
+    let e2 = Exp(2 * x);
+    let y = (e2 - 1) / (e2 + 1);
+    return 1 - y * y;
+}
+
+function ReLU(x) {
+    return Math.max(0, x);
+}
+function ReLUDerivative(x) {
+    return x > 0 ? 1 : 0
+}
+
+function SiLU(x) {
+    return x / (1 + Math.exp(-x));
+}
+function SiLUDerivative(x) {
+    let y = 1 / (1 + Math.exp(-x));
+    return x * y * (1 - y) + y;
+}
+
+// System reqrite is needed in order to be able to use these
+// function Softmax(x)
+// function SoftmaxDerivative(x)
 
 /* ********************************************************************************
     This class is responsible for storing the weights and biases of a neural network, 
@@ -80,15 +110,19 @@ I hope I remember to fill this in before we submit the final copy!`);           
                 return ${this.activation[0].name}(weighted_inputs[this.thread.x]);
             }).setOutput([${this.layersizes[i + 1]}])`));
         }
+        this.outputlayercomputer = eval(`this.gpu.createKernel(function(weighted_inputs) {
+            ${this.outputactivation[0]}
+            return ${this.outputactivation[0].name}(weighted_inputs[this.thread.x]);
+        }).setOutput([${this.layersizes[this.totallayers]}])`);
 
         // Node computation functions (for backpropagation and gradient descent)
         // These calculate the derivative of the cost with respect to weighted input
         // cost => weighted_inputs
         this.outputnodescomputer = eval(`this.gpu.createKernel(function(weighted_inputs, outputs, expected_outputs) {
             ${this.singleCost[1]}
-            ${this.activation[1]}
+            ${this.outputactivation[1]}
             return ${this.singleCost[1].name}(outputs[this.thread.x],expected_outputs[this.thread.x])
-                * ${this.activation[1].name}(weighted_inputs[this.thread.x]);
+                * ${this.outputactivation[1].name}(weighted_inputs[this.thread.x]);
         }).setOutput([${this.layersizes[this.layersizes.length - 1]}])`);
         // weighted_inputs => weighted_inputs
         this.hiddennodescomputers = [];
@@ -115,13 +149,13 @@ I hope I remember to fill this in before we submit the final copy!`);           
             for (let j = 0; j < this.layersizes[i]; j++) {
                 let sqrt = Math.sqrt(this.layersizes[i]);
                 for (let k = 0; k < this.layersizes[i + 1]; k++) {
-                    this.layerweights[i][j][k] = Math.random()/sqrt;
+                    this.layerweights[i][j][k] = Math.random() / sqrt;
                 }
             }
         }
         for (let i = 0; i < this.totallayers; i++) {
             for (let j = 0; j < this.layersizes[i + 1]; j++) {
-                this.layerbiases[i][j] = Math.random()/Math.sqrt(this.layersizes[i]);
+                this.layerbiases[i][j] = 0; // Biases should be set to 0 initially //Math.random()/Math.sqrt(this.layersizes[i]);
             }
         }
         return this;
@@ -130,8 +164,32 @@ I hope I remember to fill this in before we submit the final copy!`);           
       This function will load a neural network from a save file
       Example usage: let nn = new NeuralNetwork(784, 100, 10).fromFile("nn.txt");
     ******************************************************************************** */
-    fromFile(file) {                                                                                                 // TODO
-        //let layersizes = file.
+    fromFile(object) {                                                                                                 // TODO actual ui maybe?
+        console.log(object.connections[0].biases[0]);
+        this.layersizes = object.layerSizes;
+        this.totallayers = this.layersizes.length - 1; // Number of layers
+
+        // Layer weights
+        this.layerweights = Array(this.totallayers);
+        for (let i = 0; i < this.totallayers; i++) {
+            this.layerweights[i] = Array(this.layersizes[i]);
+            for (let j = 0; j < this.layersizes[i]; j++) {
+                this.layerweights[i][j] = Array(this.layersizes[i + 1]);
+                for (let k = 0; k < this.layersizes[i + 1]; k++) {
+                    this.layerweights[i][j][k] = object.connections[i].weights[this.layersizes[i] * j + k];
+                }
+            }
+        }
+
+        // Layer biases
+        this.layerbiases = Array(this.totallayers);
+        for (let i = 0; i < this.totallayers; i++) {
+            this.layerbiases[i] = Array(this.layersizes[i + 1]);
+            for (let j = 0; j < this.layersizes[i + 1]; j++) {
+                this.layerbiases[i][j] = object.connections[i].biases[j];
+            }
+        }
+        console.log(this.layersizes, this.layerweights, this.layerbiases);
         return this;
     }
     /* ********************************************************************************
@@ -146,7 +204,6 @@ I hope I remember to fill this in before we submit the final copy!`);           
       The singleCost function calculates the cost of a single output of the network, can be set by user 
       to functions other than the default value, user must include derivative so that the network is trainable
       Both functions have 2 inputs and a return value
-      The gpu really doesn't like it when your function creates a variable, so only math in there ok?
       Example usage: nn.setCostFunction(myfunc, myinverse);
     ******************************************************************************** */
     singleCost = [defaultCost, defaultCostDerivative];
@@ -169,7 +226,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
         for (let i = 0; i < output.length; i++) {
             cost += this.singleCost[0](output[i], expected[i]);
         }
-        return cost/output.length;
+        return cost / output.length;
     }
 
     /* ********************************************************************************
@@ -211,20 +268,25 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     runNetwork(data) {
         let currentLayer = data;
-        for (let i = 0; i < this.totallayers; i++) {
+        for (let i = 0; i < this.totallayers - 1; i++) {
             currentLayer = this.layercomputers[0][i](currentLayer, this.layerbiases[i], this.layerweights[i]);
             currentLayer = this.layercomputers[1][i](currentLayer);
         }
+        currentLayer = this.layercomputers[0][this.totallayers - 1](currentLayer, this.layerbiases[this.totallayers - 1], this.layerweights[this.totallayers - 1]);
+        currentLayer = this.outputlayercomputer(currentLayer);
         return currentLayer;
     }
     getAllValues(data) {
         // nodeValues with store a bunch of pairs, one for every layer. The first item in the pair is the weighted inputs, and the second is the activations/outputs/inputs to next layer. Netowrk input has no weighted input
         let nodeValues = [[null, data]];
-        for (let i = 0; i < this.totallayers; i++) {
+        for (let i = 0; i < this.totallayers - 1; i++) {
             nodeValues.push([null, null]); // For clarity
             nodeValues[i + 1][0] = this.layercomputers[0][i](nodeValues[i][1], this.layerbiases[i], this.layerweights[i]);
             nodeValues[i + 1][1] = this.layercomputers[1][i](nodeValues[i + 1][0]);
         }
+        nodeValues.push([null, null]); // For clarity
+        nodeValues[this.totallayers][0] = this.layercomputers[0][this.totallayers - 1](nodeValues[this.totallayers - 1][1], this.layerbiases[this.totallayers - 1], this.layerweights[this.totallayers - 1]);
+        nodeValues[this.totallayers][1] = this.outputlayercomputer(nodeValues[this.totallayers][0]);
         return nodeValues;
     }
 
@@ -236,8 +298,13 @@ I hope I remember to fill this in before we submit the final copy!`);           
       The gpu really doesn't like it when your function creates a variable, so only math in there ok?
       Example usage: nn.setActivationFunction(myfunc, myinverse);
     ******************************************************************************** */
-    activation = [sigmoid, sigmoidDerivative];
+    activation = [Sigmoid, SigmoidDerivative];
     setActivationFunction(normal, derivative) {
+        this.activation = [normal, derivative];
+        return this;
+    }
+    outputactivation = [Sigmoid, SigmoidDerivative];
+    setOutputActivationFunction(normal, derivative) {
         this.activation = [normal, derivative];
         return this;
     }
@@ -327,45 +394,6 @@ I hope I remember to fill this in before we submit the final copy!`);           
     }
 
     /* ********************************************************************************
-      These functions count the number of correct answers for all, training, or testing data
-      Assumes expected output is only 0 except for one output, the correct one, which is 1
-      Example usage: console.log("Network gets", dl.countAll(), "/", dl.totaldata, "test cases correct");
-    ******************************************************************************** */
-    countAll() {
-        return this.countTraining() + this.countTesting();
-    }
-    countTraining() {
-        let total = 0;
-        for (let i = 0; i < this.trainingset[0].length; i++) {
-            let result = this.network.runNetwork(this.trainingset[0][i]);
-            let max = 0;
-            for (let j = 1; j < result.length; j++) {
-                if (result[j] > result[max]) max = j;
-            }
-            if (this.trainingset[1][i][max] == 1) { // Right answer
-                //console.log("Right:", result, this.trainingset[1][i]);
-                total++;
-            }
-            else { // Wrong answer
-                //console.log("Wrong:", result, this.trainingset[1][i]);
-            }
-        }
-        return total;
-    }
-    countTesting() {
-        let total = 0;
-        for (let i = 0; i < this.testingset[0].length; i++) {
-            let result = this.network.runNetwork(this.testingset[0][i]);
-            let max = 0;
-            for (let j = 1; j < result.length; j++) {
-                if (result[j] > result[max]) max = j;
-            }
-            if (this.testingset[1][i][max] == 1) total++;
-        }
-        return total;
-    }
-
-    /* ********************************************************************************
       This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
       This function is here for training until done
       Example usage: let trainer = dl.train(2000);
@@ -408,16 +436,18 @@ I hope I remember to fill this in before we submit the final copy!`);           
             cost += this.network.averageCost(layerdata[layerdata.length - 1][1], this.trainingset[1][this.batchindex]);
             let largest = 0;
             let index = this.totallayers - 1; // Layer index, used later for backpropagation
-            for (let i=1; i<layerdata[index+1][1].length; i++)
-            {
-                if (layerdata[index+1][1][i] > layerdata[index+1][1][largest])
+            for (let i = 1; i < layerdata[index + 1][1].length; i++) {
+                if (layerdata[index + 1][1][i] > layerdata[index + 1][1][largest])
                     largest = i;
             }
-            if (largest == this.trainingset[1][this.batchindex]) this.totalcorrect++;
-            else if (this.incorrectguessesprinted < this.settings.maxIncorrectGuessesToPrint)
-            {
+            this.debugnow = false;
+            if (this.trainingset[1][this.batchindex][largest] == 1) this.totalcorrect++;
+            else if (this.incorrectguessesprinted < this.settings.maxIncorrectGuessesToPrint) {
                 this.incorrectguessesprinted++;
-                console.log("Incorrect guess", this.incorrectguessesprinted+", network guessed", layerdata[index+1][1], "for", this.trainingset[1][this.batchindex]+", biggest is", largest);
+                console.log("Incorrect guess", this.incorrectguessesprinted + ", network guessed", layerdata[index + 1][1], "for", this.trainingset[1][this.batchindex] + ", biggest is", largest);
+                if (this.debug) {
+                }
+                this.debugnow = true;
             }
 
             // Backpropagation begins
@@ -432,6 +462,8 @@ I hope I remember to fill this in before we submit the final copy!`);           
                 this.bgradients[index][j] += nodevalues[j];
             }
 
+            //if (this.debug) console.log("Output layer nodeValues", nodevalues);
+
             // Calculate hidden layer gradients
             for (index--; index >= 0; index--) {
                 nodevalues = this.network.hiddennodescomputers[index](layerdata[index + 1][0], this.network.layerweights[index + 1], nodevalues);
@@ -443,20 +475,31 @@ I hope I remember to fill this in before we submit the final copy!`);           
                     // Calculate the gradient for bias
                     this.bgradients[index][j] += nodevalues[j];
                 }
+
+                if (this.debug) {
+                    //console.log("Hidden layer nodeValues", nodevalues, "other multiply thingy", layerdata[index][1]);
+                    //console.log(nodevalues.length, layerdata[index][1].length);
+                }
             }
 
             // Increment the index
             this.batchindex++;
-            if (this.batchindex == this.trainingset[0].length)
-            {
+            if (this.batchindex == this.trainingset[0].length) {
                 console.log("Epoch complete, network guessed", this.totalcorrect, "/", this.trainingset[0].length, "correct");
                 this.batchindex = 0;
                 this.totalcorrect = 0;
                 this.incorrectguessesprinted = 0;
             }
+
+            if (this.debugnow) {
+                console.log("Gradients are w", this.wgradients, "b", this.bgradients);
+                console.log("Weights are w", this.network.layerweights, "b", this.network.layerbiases);
+                console.log("Fuck it, heres the layerdata", layerdata);
+            }
         }
 
-        console.log("Average cost on data is", cost/this.settings.batchsize);
+        console.log("Average cost on data is", cost / this.settings.batchsize);
+
     }
     /* ********************************************************************************
       This function will clear the gradient arrays
@@ -482,15 +525,18 @@ I hope I remember to fill this in before we submit the final copy!`);           
     applyGradients() {                                                                                                                              // TODO: this method screws up the weights because the gradients are screwed up
         // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
         let learnrate = this.settings.learnrate / this.trainamount;
-        let regularization = 0.1;
-        let weightDecay = (1 - regularization*learnrate);
+        let regularization = 0;
+        let weightDecay = (1 - regularization * learnrate);
 
         // Apply weights
         for (let i = 0; i < this.wgradients.length; i++) {
             for (let j = 0; j < this.wgradients[i].length; j++) {
                 for (let k = 0; k < this.wgradients[i][j].length; k++) {
+                    if (this.debugnow && (this.wgradients[i][j][k] > 0.1 || this.wgradients[i][j][k] < -0.1)) {
+                        console.log("Gradients", i, j, k, "is", this.wgradients[i][j][k])
+                    }
                     this.network.layerweights[i][j][k] = this.network.layerweights[i][j][k] * weightDecay - this.wgradients[i][j][k] * learnrate;
-                } 
+                }
             }
         }
 
