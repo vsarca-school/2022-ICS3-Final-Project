@@ -43,7 +43,8 @@
     </script>
 
     <script src="LearnAI.js"></script>
-    <script src="mnist_784_json - 19k.json"></script>
+    <script src="mnist_784_json - 10k.json"></script>
+    <!--script src="C:\Users\vsarca\Downloads\Neural-Network-Experiments-2e28014ede7ae696cdccba2783a40352200ac14b\Neural-Network-Experiments-2e28014ede7ae696cdccba2783a40352200ac14b\Assets\Data\Mnist\Trained Networks\Mnist Net.json"></script-->
     <script>
         // We will eventually get our digits from here: https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
 
@@ -92,16 +93,17 @@
 
         //NeuralNetwork.print();
 
-        nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
+        nn = new NeuralNetwork(784, 10).randomize().generateGPU();
 
         console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
         
         //DeepLearner.print();
 
-        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 400, batchsplit: 0.8, maxIncorrectGuessesToPrint: 0 });
+        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1 });
         
         //console.log("Network gets", dl.countAll(), "/ 1000 test cases correct");
-        dl.train(1000);
+        let trainer = dl.train(800);
+        setTimeout(function () { clearInterval(trainer); dl.test(); }, 300000);
         //let tester = setInterval(function () { console.log("Network gets", dl.countAll(), "/ 1000 test cases correct"); }, 10000);
         //let printer = setInterval(function () { console.log("Weights:", nn.layerweights, ", Biases:", nn.layerbiases); }, 10000);
         //dl.trainOnce();
