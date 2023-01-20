@@ -95,15 +95,15 @@
 
         nn = new NeuralNetwork(784, 10).randomize().generateGPU();
 
-        console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
+        //console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
         
         //DeepLearner.print();
 
-        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1 });
+        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 150, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1 });
         
         //console.log("Network gets", dl.countAll(), "/ 1000 test cases correct");
         let trainer = dl.train(800);
-        setTimeout(function () { clearInterval(trainer); dl.test(); }, 300000);
+        setTimeout(function () { clearInterval(trainer); dl.test(); }, 900000);
         //let tester = setInterval(function () { console.log("Network gets", dl.countAll(), "/ 1000 test cases correct"); }, 10000);
         //let printer = setInterval(function () { console.log("Weights:", nn.layerweights, ", Biases:", nn.layerbiases); }, 10000);
         //dl.trainOnce();

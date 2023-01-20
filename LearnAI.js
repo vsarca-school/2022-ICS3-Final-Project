@@ -393,6 +393,23 @@ I hope I remember to fill this in before we submit the final copy!`);           
         maxIncorrectGuessesToPrint: 1 // Print the first X incorrect guesses
     }
 
+    /*                                                                                                                          TODO: write this
+    */
+    test() {
+        let totalcorrect = 0;
+        for (let i=0; i<this.testingset[0].length; i++)
+        {
+            let outputs = this.network.runNetwork(this.testingset[0][i]);
+            let largest = 0;
+            for (let i = 1; i < outputs[1].length; i++) {
+                if (outputs[1][i] > outputs[1][largest])
+                    largest = i;
+            }
+            if (this.testingset[1][i][largest] == 1) totalcorrect++;
+        }
+        console.log("The network gets", totalcorrect, "/", this.testingset[0].length, "on testing data");
+    }
+
     /* ********************************************************************************
       This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
       This function is here for training until done
