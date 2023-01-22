@@ -74,7 +74,7 @@
             }
             color = 255 * (1 - x2*x2 - y1*y1);
             if (!drawing) color = 0;
-            if (drawing && arr[x][y-1] < color || erasing && arr[x][y-1] > color)
+            if (x < 28 && drawing && arr[x][y-1] < color || erasing && arr[x][y-1] > color)
             {
                 arr[x][y-1] = color;
                 ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
@@ -82,7 +82,7 @@
             }
             color = 255 * (1 - x1*x1 - y2*y2);
             if (!drawing) color = 0;
-            if (drawing && arr[x-1][y] < color || erasing && arr[x-1][y] > color)
+            if (y < 28 && drawing && arr[x-1][y] < color || erasing && arr[x-1][y] > color)
             {
                 arr[x-1][y] = color;
                 ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
@@ -90,7 +90,7 @@
             }
             color = 255 * (1 - x2*x2 - y2*y2);
             if (!drawing) color = 0;
-            if (drawing && arr[x][y] < color || erasing && arr[x][y] > color)
+            if (x < 28 && y < 28 && drawing && arr[x][y] < color || erasing && arr[x][y] > color)
             {
                 arr[x][y] = color;
                 ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
