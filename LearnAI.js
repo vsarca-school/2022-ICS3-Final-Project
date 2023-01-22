@@ -398,6 +398,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
     */
     test() {
         let totalcorrect = 0;
+        let totalwrong = 0;
         for (let i = 0; i < this.testingset[0].length; i++) {
             let outputs = this.network.runNetwork(this.testingset[0][i]);
             let largest = 0;
@@ -406,8 +407,9 @@ I hope I remember to fill this in before we submit the final copy!`);           
                     largest = j;
             }
             if (this.testingset[1][i][largest] == 1) totalcorrect++;
+            else totalwrong++;
         }
-        return "The network gets " + totalcorrect + "/" + this.testingset[0].length + " on testing data";
+        return "The network gets " + totalcorrect + "/" + this.testingset[0].length + " on testing data, and " + totalwrong + "wrong";
     }
 
     /* ********************************************************************************
