@@ -35,7 +35,7 @@
     <script>
         let arr = new Array(28);
         for (let i = 0; i < 28; i++) {
-            arr[i] = new Array(28);
+            arr[i] = new Array(28).fill(0);
             console.log(arr[i]);
         }
         // When true, moving the mouse draws on the canvas
@@ -52,23 +52,99 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
+        function drawPoint(e) {
+            if (!drawing) return;
+            let x = e.offsetX/scale + 0.5;
+            let y = e.offsetY/scale + 0.5;
+            let x1 = x % 1;
+            let y1 = y % 1;
+            let x2 = 1 - x1;
+            let y2 = 1 - y1;
+            x = Math.floor(x);
+            y = Math.floor(y);
+            let color = 255 * (1 - x1*x1 - y1*y1);
+            if (arr[x-1][y-1] < color)
+            {
+                arr[x-1][y-1] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x-1) * scale, (y-1) * scale, scale, scale);
+            }
+            color = 255 * (1 - x2*x2 - y1*y1);
+            if (arr[x][y-1] < color)
+            {
+                arr[x][y-1] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x) * scale, (y-1) * scale, scale, scale);
+            }
+            color = 255 * (1 - x1*x1 - y2*y2);
+            if (arr[x-1][y] < color)
+            {
+                arr[x-1][y] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x-1) * scale, (y) * scale, scale, scale);
+            }
+            color = 255 * (1 - x2*x2 - y2*y2);
+            if (arr[x][y] < color)
+            {
+                arr[x][y] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x) * scale, (y) * scale, scale, scale);
+            }
+        }
+        function erasePoint(e) {
+            if (!drawing) return;
+            let x = e.offsetX/scale + 0.5;
+            let y = e.offsetY/scale + 0.5;
+            let x1 = x % 1;
+            let y1 = y % 1;
+            let x2 = 1 - x1;
+            let y2 = 1 - y1;
+            x = Math.floor(x);
+            y = Math.floor(y);
+            let color = 255 * (x1*x1 - y1*y1);
+            if (arr[x-1][y-1] > color)
+            {
+                arr[x-1][y-1] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x-1) * scale, (y-1) * scale, scale, scale);
+            }
+            color = 255 * (x2*x2 - y1*y1);
+            if (arr[x][y-1] > color)
+            {
+                arr[x][y-1] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x) * scale, (y-1) * scale, scale, scale);
+            }
+            color = 255 * (x1*x1 - y2*y2);
+            if (arr[x-1][y] > color)
+            {
+                arr[x-1][y] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x-1) * scale, (y) * scale, scale, scale);
+            }
+            color = 255 * (x2*x2 - y2*y2);
+            if (arr[x][y] > color)
+            {
+                arr[x][y] = color;
+                ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                ctx.fillRect((x) * scale, (y) * scale, scale, scale);
+            }
+        }
 
         // Add the event listeners for mousedown, mousemove, and mouseup
         canvas.addEventListener('mousedown', (e) => {
             drawing = true;
+            if(e.button == 0)
+                drawPoint(e);
+            else if (e.button == 2)
+                erasePoint(e);
         });
 
         canvas.addEventListener('mousemove', (e) => {
-            x = Math.floor(e.offsetX / scale);
-            y = Math.floor(e.offsetY / scale);
-            dist = Math.sqrt(((x * scale + x * scale + scale) / 2 - e.offsetX) ** 2 + ((y * scale + y * scale + scale) / 2 - e.offsetY)**2);
-            console.log(x, y);
-            console.log(dist);
-            if (drawing) {
-                ctx.fillStyle = "white";
-                ctx.fillRect(x * scale, y * scale, scale, scale);
-                console.log(x * scale, y * scale, x * scale + scale, y * scale + scale);
-            }
+            if(e.button == 0)
+                drawPoint(e);
+            else if (e.button == 2)
+                erasePoint(e);
         });
 
         canvas.addEventListener('mouseup', (e) => {
