@@ -64,8 +64,8 @@
                 <td id="card" class="fullscreen row">
                     <div class="menu">Select an option
                         <ul class="dropdown">
-                            <li><button onclick="changeText('Code Editor')">Code Editor</button></li>
-                            <li><button onclick="changeText('Image Editor')">Image Editor</button></li>
+                            <li><button class = "select1" onclick="do something">Code Editor</button></li>
+                            <li><button class = "select2" onclick="do something">Image Editor</button></li>
                         </ul>
                     </div>
                 </td>
@@ -93,7 +93,7 @@
             <canvas id="draw" width="28" height="28"></canvas>
             <script>
                 const canvas = document.getElementById("draw");
-                const ctx = canvas.getctx('2d');
+                const ctx = canvas.getContext('2d');
                 let isDrawing = false;
                 let x = 0;
                 let y = 0;
