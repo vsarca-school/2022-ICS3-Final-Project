@@ -79,7 +79,7 @@
         {
             let totalcorrect = 0;
             let totalwrong = 0;
-            for (let i=0; i<dataset[0].length; i++)
+            for (let i=27000; i<dataset[0].length; i++)
             {
                 let output = nn.runNetwork(dataset[0][i]);
                 let cost = nn.averageCost(output, dataset[1][i]);
