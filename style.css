@@ -163,12 +163,50 @@ a:onclick {
     width: 100vw;
 }
 
-.drop-div {
-    text-align: center;
-}
-
 .row {
     height: 93vh;
     background-color: #262d63;
-    border-radius: 2vh;
+}
+
+.drop-div {
+    margin-top: -44.5vh;
+    margin-left: 2vh;
+}
+
+.dropdown {
+    font-family: 'Fester';
+    background-color: #3c87c4;
+    box-shadow: 0 0 10px #4ea6ee;
+    border-radius: 1vw;
+    color: #fcfcfc;
+    font-size: 1vw;
+    padding: 1vw;
+    border: none;
+}
+
+.close {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    border: none;
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 1vw;
+    color: #fcfcfc;
+    background-color: #3c87c4;
+    box-shadow: 0 0 10px #4ea6ee;
+    transition-duration: 0.5s;
+
+    margin-left: 1vw;
+}
+
+.close:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+#draw {
+    width: max-content;
+    height: max-content;
 }
