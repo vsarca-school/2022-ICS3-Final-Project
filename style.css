@@ -3,6 +3,42 @@
     src: url(Fester_Trial-Book.woff);
 }
 
+
+.menu {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: 60px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: red;
+}
+
+.dropdown {
+    transform: translateY(-10px);
+    background-color: red;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    transition-duration: 0.5s;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu:hover .dropdown {
+    opacity: 1;
+    transform: translateY(0px);
+    transition-delay: 0s, 0s, 0.3s;
+}
+
+.dropdown li:hover{
+    background:#262626;
+}
+
 body {
     overflow: hidden;
 }
