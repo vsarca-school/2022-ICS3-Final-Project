@@ -7,17 +7,17 @@
     <canvas id="canvasId" oncontextmenu="return false;"></canvas>
     <script>
         canvas = document.getElementById("canvasId");
-        canvas.width = 1440;
-        canvas.height = 749;
-        canvas.oncontextmenu = function() {return false};
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         if (canvas.getContext) ctx = canvas.getContext("2d"); else alert("Canvas element is not available");
         let intervalID = setInterval(draw, 10);
-        ctx.font = "bold 0.9vw Courier";
+        ctx.font = "bold 1.5vh Courier";
+        let charHeight = ctx.measureText("M").width;
         let a = 2;
         let h = 0;
         function graph(n) {
-            return 50*(Math.E**(-0.004*(n-canvas.width/3)))*Math.sin(((n-canvas.width/3)-h)/a)-canvas.height/7.75;
+            return 50*(Math.E**(-0.004*(n-canvas.width/3)))*Math.sin(((n-canvas.width/3)-h)/a)-canvas.height/40;
         }
 
         function strGenerate(length) {
@@ -29,24 +29,19 @@
         }
         let counter = 0;
         let textarr = [];
-        let scale = true;
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width*2,canvas.height*2);
-            if (scale == true) {
-                ctx.scale(window.innerWidth/1440, window.innerWidth/1440);
-                scale = false;
-            }
             //Generate new text
             if (counter == 0) {
-                for (let i = 0; i < canvas.width/8; i++) {
+                for (let i = 0; i < canvas.height*2; i++) {
                     textarr[i] = strGenerate(canvas.width/4);
                 }
             }
             ctx.fillStyle = "#7D9DDF";
-            for (let i = 0; i < canvas.width/10; i++) {
+            for (let i = 0; i < canvas.width/6; i++) {
                 for (let j = 0; j < textarr[0].length; j++) {
-                    if (10+j*10 < canvas.height/2-graph(i*10) && 20+j*10 > canvas.height/2-graph(i*10)) {
+                    if (j*10 < canvas.height/2-graph(i*10) && 1.25*charHeight+j*10 > canvas.height/2-graph(i*10)) {
                         ctx.fillText(textarr[i].charAt(j), i*10, 10+j*10);
                     }
                 }
@@ -71,7 +66,7 @@
     </script>
 </head>
 
-<body>
+<body class="background">
     <div class="titleBox" oncontextmenu="return false;">
         <pre class="title" id="title">
    __                         _     _____  _     
