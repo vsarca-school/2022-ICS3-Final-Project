@@ -1,0 +1,94 @@
+<html>
+
+<body>
+    <style>
+        #canvas_div {
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+
+    <div id="canvas_div" style="overflow-x: auto;">
+        <canvas id="canvas" width="560" height="560"></canvas>
+        <button onclick="javascript:clearArea();return false;">Clear Area</button>
+        Line width : <select id="selWidth">
+            <option value="11">11</option>
+            <option value="13" selected="selected">13</option>
+            <option value="15">15</option>
+        </select>
+        Color : <select id="selColor">
+            <option value="black">black</option>
+            <option value="blue" selected="selected">blue</option>
+            <option value="red">red</option>
+            <option value="green">green</option>
+            <option value="yellow">yellow</option>
+            <option value="gray">gray</option>
+        </select>
+    </div>
+
+    <script>
+        let arr = new Array(28);
+        for (let i = 0; i < 28; i++) {
+            arr[i] = new Array(28);
+            console.log(arr[i]);
+        }
+        // When true, moving the mouse draws on the canvas
+        let isDrawing = false;
+        let x = 0;
+        let y = 0;
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
+
+        // Add the event listeners for mousedown, mousemove, and mouseup
+        canvas.addEventListener('mousedown', (e) => {
+            x = e.offsetX;
+            y = e.offsetY;
+            isDrawing = true;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                drawLine(context, x, y, e.offsetX, e.offsetY);
+                x = e.offsetX;
+                y = e.offsetY;
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (isDrawing) {
+                drawLine(context, x, y, e.offsetX, e.offsetY);
+                x = 0;
+                y = 0;
+                isDrawing = false;
+            }
+        });
+
+        function curPixel()
+        function drawLine(context, x1, y1, x2, y2) {
+            context.beginPath();
+            context.strokeStyle = "black".value;
+            context.lineWidth = document.getElementById('selWidth').value;
+            context.lineJoin = "round";
+            context.moveTo(x1, y1);
+            context.lineTo(x2, y2);
+            context.closePath();
+            context.stroke();
+        }
+
+        function clearArea() {
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        }
+    </script>
+</body>
+
+</html>
