@@ -12,6 +12,7 @@
         var empty;
         var image_editor;
         var code_editor;
+        let counter = 0;
         document.body.onload = function (event) {
             let temp = document.getElementById("card");
             card = temp.cloneNode(true);
@@ -35,15 +36,19 @@
         }
 
         function plusButton() {
-            let newNode = card.cloneNode(true);
-            table.appendChild(newNode);
-            let newScript = document.createElement("script");
-            newScript.src = "card.js";
-            newNode.appendChild(newScript);
+            if (counter < 5) {
+                let newNode = card.cloneNode(true);
+                table.appendChild(newNode);
+                let newScript = document.createElement("script");
+                newScript.src = "card.js";
+                newNode.appendChild(newScript);
+                counter++;
+            }
         }
 
         function remove(el) {
             el.parentElement.parentElement.remove();
+            counter--;
         }
     </script>
 
