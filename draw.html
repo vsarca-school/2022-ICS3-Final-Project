@@ -45,6 +45,7 @@
         let y = 0;
         let dist = 0;
         let max = Math.sqrt(2)*(scale/2);
+        let slope = 255/max;
 
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -62,12 +63,12 @@
             x = Math.floor(e.offsetX / scale);
             y = Math.floor(e.offsetY / scale);
             dist = Math.sqrt(((x * scale + x * scale + scale) / 2 - e.offsetX) ** 2 + ((y * scale + y * scale + scale) / 2 - e.offsetY)**2);
-            console.log(x, y);
             console.log(dist);
             if (drawing) {
-                ctx.fillStyle = "white";
+                let shade = Math.round(slope*(dist));
+                console.log(shade);
+                ctx.fillStyle = "rgb(" + shade + ", " + shade + ", " + shade + ")";
                 ctx.fillRect(x * scale, y * scale, scale, scale);
-                console.log(x * scale, y * scale, x * scale + scale, y * scale + scale);
             }
         });
 
