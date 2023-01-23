@@ -13,7 +13,7 @@
     border: none;
     background-color: transparent;
     transition-duration: 0.5s;
-    background-color: #2e6b9c;
+    background-color: #3c87c4;
 }
 
 .select2 {
@@ -27,7 +27,7 @@
     border-radius: 0 0 1vh 1vh;
     background-color: transparent;
     transition-duration: 0.5s;
-    background-color: #2e6b9c;
+    background-color: #3c87c4;
 }
 
 .select1:hover .select2:hover {
@@ -92,6 +92,7 @@
 .menu {
     color: #fcfcfc;
     font-family: 'Fester';
+    font-weight: bolder;
     font-size: 20px;
     position: relative;
     text-align: center;
@@ -102,14 +103,14 @@
     margin: auto;
     border-radius: 1vh;
     transition-duration: 0.5s;
-    background-color: #2e6b9c;
+    background-color: #3c87c4;
 }
 
 .dropdown {
     transform-origin: top;
     transform: translateY(-10px);
     transform: scaleY(0);
-    background-color: red;
+    background-color: #3c87c4;
     opacity: 0;
     position: absolute;
     top: 100%;
@@ -195,6 +196,7 @@ body {
 }
 
 .noMargin {
+    background-color: #09073a;
     margin-top: 0;
     margin-left: 0;
     margin-bottom: 0;
@@ -284,4 +286,19 @@ body {
 .content {
     text-align: center;
     width: 100%;
+}
+
+.smallButton {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    border: none;
+    border-radius: 0.5vw;
+    color: #fcfcfc;
+    background-color: #3c87c4;
+    transition-duration: 0.5s;
+}
+.smallButton:hover {
+    background-color: #4ebeda;
 }

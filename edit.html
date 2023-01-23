@@ -129,8 +129,8 @@
             <div id="canvas1_div" style="overflow-x: auto;">
                 <canvas id="canvas1" width="560" height="560"></canvas><br>
                 <input type="text" name="number" id="num"><br>
-                <button onclick="javascript:addPoint();">Submit</button>
-                <button onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
+                <button class="smallButton" onclick="javascript:addPoint();">Submit</button>
+                <button class="smallButton" onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
             </div>
 
             <script>
@@ -206,7 +206,8 @@
 
                 <div id="canvas2_div" style="overflow-x: auto;">
                     <canvas id="canvas2" width="560" height="560"></canvas><br>
-                    <button onclick="javascript:clearArea();return false;">Clear Area</button>
+                    <button class="smallButton">Submit</button>
+                    <button class="smallButton" onclick="javascript:clearArea();return false;">Clear Area</button>
                 </div>
             </body>
 
@@ -215,14 +216,15 @@
 
         <!-- Code Editor -->
         <div class="content" id="Code Editor">
-            <textarea rows=50 style="resize: none; margin: 1% 5%; width:90%;">NeuralNetwork.print();
+            <textarea rows="50" spellcheck="false" style="resize: none; margin: 1% 5%; width:90%;">NeuralNetwork.print();
 DeepLearner.print();
 
 nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
 dl = new DeepLearner(nn, MNIST_DATABASE, { learnrate: 10, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
 
 let trainer = dl.train(600);</textarea>
-            <button>Run</button>
+            <button class="smallButton">Run</button>
+            <a>Upload neural network into variable nn</a>
         </div>
     </div>
 </body>
