@@ -2,7 +2,7 @@
 
 <body>
     <style>
-        #canvas_div {
+        #canvas1_div {
             text-align: center;
             display: block;
             margin-left: auto;
@@ -10,16 +10,16 @@
         }
     </style>
 
-    <div id="canvas_div" style="overflow-x: auto;">
-        <canvas id="canvas" width="560" height="560"></canvas><br>
+    <div id="canvas1_div" style="overflow-x: auto;">
+        <canvas id="canvas1" width="560" height="560"></canvas><br>
         <input type="text" name="number" id="num"><br>
         <button onclick="javascript:addPoint();">Submit</button>
         <button onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
     </div>
 
     <script>
-        let canvas = document.getElementById("canvas");
-        let ctx = canvas.getContext("2d");
+        let canvas1 = document.getElementById("canvas1");
+        let ctx1 = canvas1.getContext("2d");
         let points = new Array();
 
         function addPoint() {
@@ -28,43 +28,43 @@
             points.push(val);
             console.log(points.length);
             if (points.length === 1) {
-                ctx.beginPath();
-                ctx.arc(0, (canvas.height * (1 - val)), 2, 0, 2 * Math.PI);
-                ctx.fillStyle = "#7D9DDF";
-                ctx.fill();
-                ctx.strokeStyle = "#7D9DDF";
-                ctx.stroke();
+                ctx1.beginPath();
+                ctx1.arc(0, (canvas1.height * (1 - val)), 2, 0, 2 * Math.PI);
+                ctx1.fillStyle = "#7D9DDF";
+                ctx1.fill();
+                ctx1.strokeStyle = "#7D9DDF";
+                ctx1.stroke();
             }
             else {
                 for (let i = 0; i < points.length; i++) {
-                    let x = canvas.width / (points.length - 1) * i;
-                    let y = (canvas.height * (1 - points[i]));
-                    ctx.beginPath();
-                    ctx.arc(x, y, 2, 0, 2 * Math.PI);
-                    ctx.fillStyle = "#7D9DDF";
-                    ctx.fill();
-                    ctx.strokeStyle = "#7D9DDF";
-                    ctx.stroke();
+                    let x = canvas1.width / (points.length - 1) * i;
+                    let y = (canvas1.height * (1 - points[i]));
+                    ctx1.beginPath();
+                    ctx1.arc(x, y, 2, 0, 2 * Math.PI);
+                    ctx1.fillStyle = "#7D9DDF";
+                    ctx1.fill();
+                    ctx1.strokeStyle = "#7D9DDF";
+                    ctx1.stroke();
                 }
-                ctx.beginPath();
+                ctx1.beginPath();
                 for (let i = 0; i < points.length; i++) {
-                    let x = canvas.width / (points.length - 1) * i;
-                    let y = (canvas.height * (1 - points[i]));
+                    let x = canvas1.width / (points.length - 1) * i;
+                    let y = (canvas1.height * (1 - points[i]));
                     if (i === 0) {
-                        ctx.moveTo(x, y);
+                        ctx1.moveTo(x, y);
                     } else {
-                        ctx.lineTo(x, y);
+                        ctx1.lineTo(x, y);
                     }
                 }
-                ctx.strokeStyle = "#7D9DDF";
-                ctx.stroke();
+                ctx1.strokeStyle = "#7D9DDF";
+                ctx1.stroke();
             }
 
 
         }
 
         function clearArea() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
         }
 
     </script>
