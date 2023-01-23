@@ -3,7 +3,7 @@
     for (let i = 0; i < 28; i++) {
         arr[i] = new Array(28).fill(0);
     }
-    let testingdata = new Array(784);
+    let testingdata = new Array(784).fill(0);
     // When true, moving the mouse draws on the canvas
     let scale = 20;
     let drawing = false;
@@ -100,13 +100,13 @@
     }
 
     function submitImage() {
-        console.log(testingdata);
-        let output = nn.runNetwork(testingdata);
+        let output = nn.runNetwork(testingdata.slice(0,784));
         let largest = 0;
         for (let i=1; i<output.length; i++)
         {
             if (output[i] > output[largest]) largest = i;
         }
         guess.innerHTML = "Network guesses "+largest;
+        console.log("Network output for user-drawn image: ", output);
     }
 }
