@@ -87,18 +87,20 @@
     <div class="topBar">
         <a href="index.html"><button class="arrow"><<</button></a>
         <button class="plus" onclick="plusButton()">+</button>
+        <button class="import">Import Save</button>
+        <button class="export">Export Save</button>
     </div>
     <div>
         <table class="fullscreen">
             <tr class="fullscreen" id="card-holder">
                 <td id="card" class="fullscreen row">
+                    <button class="xbutton" onclick="remove(this)">X</button>
                     <div class="menu"> Select an option
                         <ul class="dropdown">
                             <li><button class="select1">Graph</button></li>
                             <li><button class="select1">Image Editor</button></li>
                             <li><button class="select2">Code Editor</button></li>
                         </ul>
-                        <button class="xbutton" onclick="remove(this)">X</button>
                     </div>
                     <div class="content"></div>
                 </td>
