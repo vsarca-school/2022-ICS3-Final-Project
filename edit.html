@@ -75,6 +75,10 @@
             el.parentElement.parentElement.remove();
             counter--;
         }
+
+        function changeText(el) {
+            el.parentElement.parentElement.parentElement.firstChild.textContent = el.textContent;
+        }
     </script>
 
     <div class="topBar">
@@ -85,7 +89,7 @@
         <table class="fullscreen">
             <tr class="fullscreen" id="card-holder">
                 <td id="card" class="fullscreen row">
-                    <div class="menu">Select an option
+                    <div class="menu"> Select an option
                         <ul class="dropdown">
                             <li><button class="select1">Graph</button></li>
                             <li><button class="select1">Image Editor</button></li>
