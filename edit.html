@@ -12,22 +12,20 @@
         // Only the MNIST handwritten digits database is available for now in the editor
         // Downloaded from https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
         // Not uploading a gigbyte to github, so its only 1k out of the 70k digits
-        let MNIST_DATABASE=[[], []];
-        for (let i=0; i<1000; i++)
-        {
+        let MNIST_DATABASE = [[], []];
+        for (let i = 0; i < 1000; i++) {
             // answer
-            MNIST_DATABASE[1].push([0,0,0,0,0,0,0,0,0,0]);
+            MNIST_DATABASE[1].push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
             MNIST_DATABASE[1][i][data[i].class] = 1;
-            
+
             // image
             MNIST_DATABASE[0].push([]);
-            for (let j=1; j<=784; j++)
-            {
-                MNIST_DATABASE[0][i].push(data[i]["pixel"+j.toString()]/255);
+            for (let j = 1; j <= 784; j++) {
+                MNIST_DATABASE[0][i].push(data[i]["pixel" + j.toString()] / 255);
             }
         }
 
-        var nn = new NeuralNetwork(1,1);
+        var nn = new NeuralNetwork(1, 1);
         var dl;
     </script>
 </head>
@@ -119,11 +117,197 @@
 
         <!-- Graph displaying network accuracy -->
         <div class="content" id="Graph">
-            <canvas id="canvas" width="560" height="560"></canvas>
+            <style>
+                #canvas1_div {
+                    text-align: center;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            </style>
+
+            <div id="canvas1_div" style="overflow-x: auto;">
+                <canvas id="canvas1" width="560" height="560"></canvas><br>
+                <input type="text" name="number" id="num"><br>
+                <button onclick="javascript:addPoint();">Submit</button>
+                <button onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
+            </div>
+
+            <script>
+                let canvas1 = document.getElementById("canvas1");
+                let ctx1 = canvas1.getContext("2d");
+                let points = new Array();
+
+                function addPoint() {
+                    clearArea();
+                    let val = document.getElementById("num").value;
+                    points.push(val);
+                    console.log(points.length);
+                    if (points.length === 1) {
+                        ctx1.beginPath();
+                        ctx1.arc(0, (canvas1.height * (1 - val)), 2, 0, 2 * Math.PI);
+                        ctx1.fillStyle = "#7D9DDF";
+                        ctx1.fill();
+                        ctx1.strokeStyle = "#7D9DDF";
+                        ctx1.stroke();
+                    }
+                    else {
+                        for (let i = 0; i < points.length; i++) {
+                            let x = canvas1.width / (points.length - 1) * i;
+                            let y = (canvas1.height * (1 - points[i]));
+                            ctx1.beginPath();
+                            ctx1.arc(x, y, 2, 0, 2 * Math.PI);
+                            ctx1.fillStyle = "#7D9DDF";
+                            ctx1.fill();
+                            ctx1.strokeStyle = "#7D9DDF";
+                            ctx1.stroke();
+                        }
+                        ctx1.beginPath();
+                        for (let i = 0; i < points.length; i++) {
+                            let x = canvas1.width / (points.length - 1) * i;
+                            let y = (canvas1.height * (1 - points[i]));
+                            if (i === 0) {
+                                ctx1.moveTo(x, y);
+                            } else {
+                                ctx1.lineTo(x, y);
+                            }
+                        }
+                        ctx1.strokeStyle = "#7D9DDF";
+                        ctx1.stroke();
+                    }
+
+
+                }
+
+                function clearArea() {
+                    ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+                }
+
+            </script>
         </div>
 
         <!-- Image Editor -->
-        <div class="content" id="Image Editor">Image Editor</div>
+        <div class="content" id="Image Editor">
+            <html>
+
+            <body>
+                <style>
+                    #canvas2_div {
+                        text-align: center;
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+
+                    canvas2 {
+                        border: 2px solid black;
+                    }
+                </style>
+
+                <div id="canvas2_div" style="overflow-x: auto;">
+                    <canvas id="canvas2" width="560" height="560"></canvas><br>
+                    <button onclick="javascript:clearArea();return false;">Clear Area</button>
+                </div>
+
+                <script>
+                    let arr = new Array(28);
+                    for (let i = 0; i < 28; i++) {
+                        arr[i] = new Array(28).fill(0);
+                        console.log(arr[i]);
+                    }
+                    // When true, moving the mouse draws on the canvas2
+                    let scale = 20;
+                    let drawing = false;
+                    let erasing = false;
+                    let x = 0;
+                    let y = 0;
+                    let dist = 0;
+                    let max = Math.sqrt(2) * (scale / 2);
+                    let slope = 255 / max;
+
+                    const canvas2 = document.getElementById('canvas2');
+                    const ctx2 = canvas2.getContext('2d');
+                    ctx2.fillStyle = "black";
+                    ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+                    // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas2.
+                    function drawPoint(e) {
+                        if (!drawing && !erasing) return;
+                        let x = e.offsetX / scale + 0.5;
+                        let y = e.offsetY / scale + 0.5;
+                        let x1 = x % 1;
+                        let y1 = y % 1;
+                        let x2 = 1 - x1;
+                        let y2 = 1 - y1;
+                        x = Math.floor(x);
+                        y = Math.floor(y);
+                        let color = 255 * (1 - x1 * x1 - y1 * y1);
+                        if (!drawing) color = 0;
+                        if (x > 0 && x < 28 && y > 0 && y < 28 && (drawing && arr[x - 1][y - 1] < color || erasing && arr[x - 1][y - 1] > color)) {
+                            arr[x - 1][y - 1] = color;
+                            ctx2.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                            ctx2.fillRect((x - 1) * scale, (y - 1) * scale, scale, scale);
+                        }
+                        color = 255 * (1 - x2 * x2 - y1 * y1);
+                        if (!drawing) color = 0;
+                        if (x >= 0 && x < 28 && y > 0 && y < 28 && (drawing && arr[x][y - 1] < color || erasing && arr[x][y - 1] > color)) {
+                            arr[x][y - 1] = color;
+                            ctx2.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                            ctx2.fillRect((x) * scale, (y - 1) * scale, scale, scale);
+                        }
+                        color = 255 * (1 - x1 * x1 - y2 * y2);
+                        if (!drawing) color = 0;
+                        if (x > 0 && x < 28 && y >= 0 && y < 28 && (drawing && arr[x - 1][y] < color || erasing && arr[x - 1][y] > color)) {
+                            arr[x - 1][y] = color;
+                            ctx2.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                            ctx2.fillRect((x - 1) * scale, (y) * scale, scale, scale);
+                        }
+                        color = 255 * (1 - x2 * x2 - y2 * y2);
+                        if (!drawing) color = 0;
+                        if (x >= 0 && x < 28 && y >= 0 && y < 28 && (drawing && arr[x][y] < color || erasing && arr[x][y] > color)) {
+                            arr[x][y] = color;
+                            ctx2.fillStyle = `rgb(${color}, ${color}, ${color})`;
+                            ctx2.fillRect((x) * scale, (y) * scale, scale, scale);
+                        }
+                    }
+
+                    // Add the event listeners for mousedown, mousemove, and mouseup
+                    canvas2.addEventListener('mousedown', (e) => {
+                        if (e.button == 0) drawing = true;
+                        else if (e.button == 1) erasing = true;
+                        drawPoint(e);
+                    });
+
+                    canvas2.addEventListener('mousemove', drawPoint);
+
+                    canvas2.addEventListener('mouseup', (e) => {
+                        if (e.button == 0) drawing = false;
+                        else if (e.button == 1) erasing = false;
+                    });
+
+                    function drawLine(ctx2, x1, y1, x2, y2) {
+                        ctx2.beginPath();
+                        ctx2.strokeStyle = "white";
+                        ctx2.lineWidth = document.getElementById('selWidth').value;
+                        ctx2.lineJoin = "round";
+                        ctx2.moveTo(x1, y1);
+                        ctx2.lineTo(x2, y2);
+                        ctx2.closePath();
+                        ctx2.stroke();
+                    }
+
+                    function clearArea() {
+                        ctx2.fillStyle = "black";
+                        ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+                        for (let i = 0; i < 28; i++) {
+                            arr[i].fill(0);
+                        }
+                    }
+                </script>
+            </body>
+
+            </html>
+        </div>
 
         <!-- Code Editor -->
         <div class="content" id="Code Editor">
