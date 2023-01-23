@@ -11,9 +11,8 @@
         var card;
         var table;
 
-        var empty;
-        var image_editor;
-        var code_editor;
+        var card_types = [];
+
         let counter = 0;
         document.body.onload = function (event) {
             let temp = document.getElementById("card");
@@ -23,17 +22,17 @@
 
             table = document.getElementById("card-holder");
 
-            temp = document.getElementById("empty");
-            empty = temp.cloneNode(true);
-            empty.removeAttribute("id");
+            temp = document.getElementById("Graph");
+            card_types[0] = temp.cloneNode(true);
+            card_types[0].removeAttribute("id");
             temp.remove();
             temp = document.getElementById("Image Editor");
-            image_editor = temp.cloneNode(true);
-            image_editor.removeAttribute("id");
+            card_types[1] = temp.cloneNode(true);
+            card_types[1].removeAttribute("id");
             temp.remove();
             temp = document.getElementById("Code Editor");
-            code_editor = temp.cloneNode(true);
-            code_editor.removeAttribute("id");
+            card_types[2] = temp.cloneNode(true);
+            card_types[2].removeAttribute("id");
             temp.remove();
         }
 
@@ -64,15 +63,17 @@
                 <td id="card" class="fullscreen row">
                     <div class="menu">Select an option
                         <ul class="dropdown">
-                            <li><button class = "select1" onclick="do something">Code Editor</button></li>
-                            <li><button class = "select2" onclick="do something">Image Editor</button></li>
+                            <li><button class="select1">Graph</button></li>
+                            <li><button class="select1">Code Editor</button></li>
+                            <li><button class="select2">Image Editor</button></li>
                         </ul>
                     </div>
+                    <div class="content"></div>
                 </td>
             </tr>
         </table>
 
-        <div class="content" id="empty"></div>
+        <div class="content" id="Graph">Graph</div>
         <div class="content" id="Image Editor">Image Editor</div>
 
         <!-- Code Editor -->
