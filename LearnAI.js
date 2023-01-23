@@ -497,8 +497,8 @@ applyGradients()`);
         // Fill the two sets using the batchsplit setting
         this.trainingset[0] = dataset[0].slice(0, this.trainamount);
         this.trainingset[1] = dataset[1].slice(0, this.trainamount);
-        this.testingset[0] = dataset[0].slice(this.trainamount, this.dataset[0].length);
-        this.testingset[1] = dataset[1].slice(this.trainamount, this.dataset[1].length);
+        this.testingset[0] = dataset[0].slice(this.trainamount, dataset[0].length);
+        this.testingset[1] = dataset[1].slice(this.trainamount, dataset[1].length);
 
         // Weight gradients and velocities
         this.wgradients = Array(this.network.layerweights.length);
