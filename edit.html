@@ -64,7 +64,7 @@
         }
 
         function plusButton() {
-            if (counter < 5) {
+            if (counter < 3) {
                 let newNode = card.cloneNode(true);
                 table.appendChild(newNode);
                 let newScript = document.createElement("script");
@@ -75,7 +75,7 @@
         }
 
         function remove(el) {
-            el.parentElement.parentElement.remove();
+            el.parentElement.remove();
             counter--;
         }
 
@@ -98,9 +98,9 @@
                             <li><button class="select1">Image Editor</button></li>
                             <li><button class="select2">Code Editor</button></li>
                         </ul>
-                        <button class="xbutton" onclick="remove(this)">X</button>
                     <div class="content"></div>
                     </div>
+                    <button class="xbutton" onclick="remove(this)">X</button>
                 </td>
             </tr>
         </table>

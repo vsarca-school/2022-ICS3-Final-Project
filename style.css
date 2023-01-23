@@ -35,6 +35,24 @@
     box-shadow: 0 0 20px #70e2ff;
 }
 
+.xbutton {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    text-align: center;
+    margin-left: 7px;
+    font-size: 5vh;
+    font-stretch: ultra-condensed;
+    width: 7vh;
+    height: 7vh;
+    border: none;
+    border-radius: 1vh;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+.xbutton:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
 .menu {
     color: #fcfcfc;
     font-family: 'Fester';
