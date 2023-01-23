@@ -9,6 +9,7 @@
             content = td.getElementsByClassName("content")[0];
             let newNode = card_types[i].cloneNode(true);
             td.replaceChild(newNode, content);
+            content.remove();
             
             let newScript = document.createElement("script");
             newScript.src = card_scripts[i];

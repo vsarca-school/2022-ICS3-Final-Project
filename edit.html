@@ -83,10 +83,10 @@
 
         let input = document.createElement("input");
         input.type = "file";
-        input.onchange = function(e) {
+        input.onchange = function (e) {
             let reader = new FileReader();
             reader.onload = function () {
-                nn = new NeuralNetwork(1,1).fromFile(JSON.parse(reader.result));
+                nn = new NeuralNetwork(1, 1).fromFile(JSON.parse(reader.result));
             }
             reader.readAsText(input.files[0]);
         }
@@ -102,7 +102,7 @@
         <table class="fullscreen">
             <tr class="fullscreen" id="card-holder">
                 <td id="card" class="fullscreen row">
-                    <button class="xbutton" onclick="remove(this)">×</button>
+                    <button class="xbutton" onclick="remove(this)">x</button>
                     <div class="menu"> Select an option
                         <ul class="dropdown">
                             <li><button onclick="changeText(this)" class="select1">Graph</button></li>
@@ -132,91 +132,18 @@
                 <button class="smallButton" onclick="javascript:addPoint();">Submit</button>
                 <button class="smallButton" onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
             </div>
-
-            <script>
-                let canvas1 = document.getElementById("canvas1");
-                let ctx1 = canvas1.getContext("2d");
-                let points = new Array();
-
-                function addPoint() {
-                    clearArea();
-                    let val = document.getElementById("num").value;
-                    points.push(val);
-                    console.log(points.length);
-                    if (points.length === 1) {
-                        ctx1.beginPath();
-                        ctx1.arc(0, (canvas1.height * (1 - val)), 2, 0, 2 * Math.PI);
-                        ctx1.fillStyle = "#7D9DDF";
-                        ctx1.fill();
-                        ctx1.strokeStyle = "#7D9DDF";
-                        ctx1.stroke();
-                    }
-                    else {
-                        for (let i = 0; i < points.length; i++) {
-                            let x = canvas1.width / (points.length - 1) * i;
-                            let y = (canvas1.height * (1 - points[i]));
-                            ctx1.beginPath();
-                            ctx1.arc(x, y, 2, 0, 2 * Math.PI);
-                            ctx1.fillStyle = "#7D9DDF";
-                            ctx1.fill();
-                            ctx1.strokeStyle = "#7D9DDF";
-                            ctx1.stroke();
-                        }
-                        ctx1.beginPath();
-                        for (let i = 0; i < points.length; i++) {
-                            let x = canvas1.width / (points.length - 1) * i;
-                            let y = (canvas1.height * (1 - points[i]));
-                            if (i === 0) {
-                                ctx1.moveTo(x, y);
-                            } else {
-                                ctx1.lineTo(x, y);
-                            }
-                        }
-                        ctx1.strokeStyle = "#7D9DDF";
-                        ctx1.stroke();
-                    }
-
-
-                }
-
-                function clearArea() {
-                    ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
-                }
-
-            </script>
         </div>
 
-        <!-- Image Editor -->
-        <div class="content" id="Image Editor">
-            <html>
-
-            <body>
-                <style>
-                    #canvas2_div {
-                        text-align: center;
-                        display: block;
-                        margin-left: auto;
-                        margin-right: auto;
-                    }
-
-                    #canvas2 {
-                        border: 2px solid black;
-                    }
-                </style>
-
-                <div id="canvas2_div" style="overflow-x: auto;">
-                    <canvas id="canvas2" width="560" height="560"></canvas><br>
-                    <button class="smallButton">Submit</button>
-                    <button class="smallButton" onclick="javascript:clearArea();return false;">Clear Area</button>
-                </div>
-            </body>
-
-            </html>
+        <!-- Image Editor, submission to network for evaluation -->
+        <div class="content image-editor-div" id="Image Editor">
+            <canvas class="image-editor-canvas" width="560" height="560"></canvas><br>
+            <button class="smallButton">Submit</button>
+            <button class="smallButton clearButton">Clear Area</button>
         </div>
 
         <!-- Code Editor -->
         <div class="content" id="Code Editor">
-            <textarea rows="50" spellcheck="false" style="resize: none; margin: 1% 5%; width:90%;">NeuralNetwork.print();
+            <textarea rows="50" spellcheck="false" style="resize: none; margin: 0 5%; width: 90%;">NeuralNetwork.print();
 DeepLearner.print();
 
 nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();

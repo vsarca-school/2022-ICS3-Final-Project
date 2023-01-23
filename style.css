@@ -49,6 +49,7 @@
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .export {
     color: #fcfcfc;
     font-family: bold 'Courier New', Courier, monospace;
@@ -64,7 +65,8 @@
     transition-duration: 0.5s;
 }
 
-.import:hover, .export:hover {
+.import:hover,
+.export:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
 }
@@ -85,10 +87,12 @@
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .xbutton:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
 }
+
 .menu {
     color: #fcfcfc;
     font-family: 'Fester';
@@ -241,6 +245,7 @@ body {
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .plus:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
@@ -286,6 +291,7 @@ body {
 .content {
     text-align: center;
     width: 100%;
+    padding-top: 3%;
 }
 
 .smallButton {
@@ -299,6 +305,18 @@ body {
     background-color: #3c87c4;
     transition-duration: 0.5s;
 }
+
 .smallButton:hover {
     background-color: #4ebeda;
+}
+
+.image-editor-div {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.image-editor-canvas {
+    border: 2px solid black;
 }
