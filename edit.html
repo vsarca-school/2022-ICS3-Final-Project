@@ -38,7 +38,7 @@
         var table;
 
         var card_types = [];
-        var card_scripts = ["", "", "Code Editor.js"];
+        var card_scripts = ["Graph.js", "Image Editor.js", "Code Editor.js"];
 
         let counter = 0;
         document.body.onload = function (event) {
@@ -82,13 +82,23 @@
         function changeText(el) {
             el.parentElement.parentElement.parentElement.firstChild.textContent = el.textContent;
         }
+
+        let input = document.createElement("input");
+        input.type = "file";
+        input.onchange = function(e) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                nn = new NeuralNetwork(1,1).fromFile(JSON.parse(reader.result));
+            }
+            reader.readAsText(input.files[0]);
+        }
     </script>
 
     <div class="topBar">
         <a href="index.html"><button class="arrow"><<</button></a>
         <button class="plus" onclick="plusButton()">+</button>
-        <button class="import">Import Save</button>
-        <button class="export">Export Save</button>
+        <button class="import" onclick="input.click()">Import Network</button>
+        <button class="export" onclick="nn.saveToFile('network.txt')">Export Network</button>
     </div>
     <div>
         <table class="fullscreen">
