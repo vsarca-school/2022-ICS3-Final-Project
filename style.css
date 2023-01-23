@@ -49,12 +49,6 @@
     background-color: transparent;
     transition-duration: 0.5s;
 }
-
-.import:hover {
-    background-color: #4ebeda;
-    box-shadow: 0 0 20px #70e2ff;
-}
-
 .export {
     color: #fcfcfc;
     font-family: bold 'Courier New', Courier, monospace;
@@ -70,7 +64,7 @@
     transition-duration: 0.5s;
 }
 
-.export:hover {
+.import:hover, .export:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
 }
