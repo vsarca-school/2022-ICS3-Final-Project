@@ -226,3 +226,8 @@ body {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
 }
+
+.content {
+    text-align: center;
+    width: 100%;
+}

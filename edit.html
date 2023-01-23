@@ -1,9 +1,32 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="style.css">
 
 <head>
+    <link rel="stylesheet" href="style.css">
     <title>LearnAI.js - Editor</title>
+    <meta charset="utf-8">
+    <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
+    <script src="LearnAI.js"></script>
+    <script src="mnist_784_json - 1k.txt"></script>
+    <script>
+        // Only the MNIST handwritten digits database is available for now in the editor
+        // Downloaded from https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
+        // Not uploading a gigbyte to github, so its only 1k out of the 70k digits
+        let dataset=[[], []];
+        for (let i=0; i<1000; i++)
+        {
+            // answer
+            dataset[1].push([0,0,0,0,0,0,0,0,0,0]);
+            dataset[1][i][data[i].class] = 1;
+            
+            // image
+            dataset[0].push([]);
+            for (let j=1; j<=784; j++)
+            {
+                dataset[0][i].push(data[i]["pixel"+j.toString()]/255);
+            }
+        }
+    </script>
 </head>
 
 <body class="noMargin">
@@ -12,6 +35,7 @@
         var table;
 
         var card_types = [];
+        var card_scripts = ["", "", "Code Editor.js"];
 
         let counter = 0;
         document.body.onload = function (event) {
@@ -64,8 +88,8 @@
                     <div class="menu">Select an option
                         <ul class="dropdown">
                             <li><button class="select1">Graph</button></li>
-                            <li><button class="select1">Code Editor</button></li>
-                            <li><button class="select2">Image Editor</button></li>
+                            <li><button class="select1">Image Editor</button></li>
+                            <li><button class="select2">Code Editor</button></li>
                         </ul>
                     </div>
                     <div class="content"></div>
@@ -73,13 +97,22 @@
             </tr>
         </table>
 
+        <!-- Graph displaying network accuracy -->
         <div class="content" id="Graph">Graph</div>
+
+        <!-- Image Editor -->
         <div class="content" id="Image Editor">Image Editor</div>
 
         <!-- Code Editor -->
         <div class="content" id="Code Editor">
-            <h2>Code Editor</h2>
-            <textarea></textarea>
+            <textarea rows=50 style="resize: none; margin: 1% 5%; width:90%;">NeuralNetwork.print();
+DeepLearner.print();
+nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
+dl = new DeepLearner(nn, MNIST_DATABASE, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
+
+let trainer = dl.train(600);</textarea>
+            <button>Run</button>
+            <a>Upload neural network into variable nn</a>
         </div>
     </div>
 </body>

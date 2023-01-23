@@ -7,7 +7,12 @@
     {
         buttons[i].onclick = function () {
             content = td.getElementsByClassName("content")[0];
-            td.replaceChild(card_types[i].cloneNode(true), content);
+            let newNode = card_types[i].cloneNode(true);
+            td.replaceChild(newNode, content);
+            
+            let newScript = document.createElement("script");
+            newScript.src = card_scripts[i];
+            newNode.appendChild(newScript);
         }
     }
 
