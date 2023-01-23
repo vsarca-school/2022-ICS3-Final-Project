@@ -355,7 +355,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             this.trainingset[0].push(dataset[0][i]);                                                                    // TODO: there must be a more efficient way to split arrays
             this.trainingset[1].push(dataset[1][i]);
         }
-        for (let i = this.trainamount; i < this.totaldata; i++) {
+        for (let i = Math.ceil(this.trainamount); i < this.totaldata; i++) {
             this.testingset[0].push(dataset[0][i]);
             this.testingset[1].push(dataset[1][i]);
         }
@@ -409,7 +409,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             if (this.testingset[1][i][largest] == 1) totalcorrect++;
             else totalwrong++;
         }
-        return "The network gets " + totalcorrect + "/" + this.testingset[0].length + " on testing data, and " + totalwrong + "wrong";
+        return "The network gets " + totalcorrect + "/" + this.testingset[0].length + " on testing data";
     }
 
     /* ********************************************************************************
