@@ -109,14 +109,12 @@
 
         <!-- Code Editor -->
         <div class="content" id="Code Editor">
-            <textarea rows=50 style="resize: none; margin: 1% 5%; width:90%;">var trainer;
-NeuralNetwork.print();
+            <textarea rows=50 style="resize: none; margin: 1% 5%; width:90%;">NeuralNetwork.print();
 DeepLearner.print();
 nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
 dl = new DeepLearner(nn, MNIST_DATABASE, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
 
-clearInterval(trainer);
-trainer = dl.train(600);</textarea>
+let trainer = dl.train(600);</textarea>
             <button>Run</button>
             <a>Upload neural network into variable nn</a>
         </div>
