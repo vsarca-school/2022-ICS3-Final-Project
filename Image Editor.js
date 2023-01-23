@@ -10,6 +10,7 @@
 
     let content = document.currentScript.parentElement;
     let canvas = content.getElementsByTagName("canvas")[0];
+    let submit = content.getElementsByClassName("submitButton")[0];
     let clear = content.getElementsByClassName("clearButton")[0];
     clear.onclick = clearArea;
 

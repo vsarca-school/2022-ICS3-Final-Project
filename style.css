@@ -310,13 +310,13 @@ body {
     background-color: #4ebeda;
 }
 
-.image-editor-div {
+.editor-div {
     text-align: center;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
-.image-editor-canvas {
+.editor-canvas {
     border: 2px solid black;
 }
