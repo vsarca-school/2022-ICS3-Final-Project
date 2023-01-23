@@ -3,6 +3,7 @@
     for (let i = 0; i < 28; i++) {
         arr[i] = new Array(28).fill(0);
     }
+    let testingdata = new Array(784);
     // When true, moving the mouse draws on the canvas
     let scale = 20;
     let drawing = false;
@@ -12,6 +13,8 @@
     let canvas = content.getElementsByTagName("canvas")[0];
     let submit = content.getElementsByClassName("submitButton")[0];
     let clear = content.getElementsByClassName("clearButton")[0];
+    let guess = content.getElementsByClassName("guess")[0];
+    submit.onclick = submitImage;
     clear.onclick = clearArea;
 
     let ctx = canvas.getContext('2d');
@@ -33,6 +36,7 @@
         if (!drawing) color = 0;
         if (x > 0 && x < 28 && y > 0 && y < 28 && (drawing && arr[x - 1][y - 1] < color || erasing && arr[x - 1][y - 1] > color)) {
             arr[x - 1][y - 1] = color;
+            testingdata[(x-1) + 28*(y-1)] = color/255;
             ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
             ctx.fillRect((x - 1) * scale, (y - 1) * scale, scale, scale);
         }
@@ -40,6 +44,7 @@
         if (!drawing) color = 0;
         if (x >= 0 && x < 28 && y > 0 && y < 28 && (drawing && arr[x][y - 1] < color || erasing && arr[x][y - 1] > color)) {
             arr[x][y - 1] = color;
+            testingdata[(x) + 28*(y-1)] = color/255;
             ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
             ctx.fillRect((x) * scale, (y - 1) * scale, scale, scale);
         }
@@ -47,11 +52,13 @@
         if (!drawing) color = 0;
         if (x > 0 && x < 28 && y >= 0 && y < 28 && (drawing && arr[x - 1][y] < color || erasing && arr[x - 1][y] > color)) {
             arr[x - 1][y] = color;
+            testingdata[(x-1) + 28*(y)] = color/255;
             ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
             ctx.fillRect((x - 1) * scale, (y) * scale, scale, scale);
         }
         color = 255 * (1 - x2 * x2 - y2 * y2);
         if (!drawing) color = 0;
+        testingdata[(x) + 28*(y)] = color/255;
         if (x >= 0 && x < 28 && y >= 0 && y < 28 && (drawing && arr[x][y] < color || erasing && arr[x][y] > color)) {
             arr[x][y] = color;
             ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
@@ -90,5 +97,16 @@
         for (let i = 0; i < 28; i++) {
             arr[i].fill(0);
         }
+    }
+
+    function submitImage() {
+        console.log(testingdata);
+        let output = nn.runNetwork(testingdata);
+        let largest = 0;
+        for (let i=1; i<output.length; i++)
+        {
+            if (output[i] > output[largest]) largest = i;
+        }
+        guess.innerHTML = "Network guesses "+largest;
     }
 }

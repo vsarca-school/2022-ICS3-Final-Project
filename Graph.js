@@ -67,8 +67,8 @@
         dl.onEpoch = function (correct, total) {
             accuracy.innerHTML = "The network got "+correct+"/"+total+" in the most recent epoch."
         }
-        dl.onCost = function (cost) {
-            cost.innerHTML = "Cost: "+cost;
+        dl.onCost = function (value) {
+            cost.innerHTML = "Cost: "+value;
         }
     }
     function stopButton() {

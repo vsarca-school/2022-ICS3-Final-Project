@@ -320,3 +320,11 @@ body {
 .editor-canvas {
     border: 2px solid black;
 }
+
+.info-test {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    color: #fcfcfc;
+}
