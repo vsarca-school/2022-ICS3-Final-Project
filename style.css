@@ -35,6 +35,46 @@
     box-shadow: 0 0 20px #70e2ff;
 }
 
+.import {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    position: absolute;
+    text-align: center;
+    left: 9vw;
+    font-size: 3vh;
+    width: 20vh;
+    height: 7vh;
+    border-radius: 1vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+
+.import:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+.export {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    position: absolute;
+    text-align: center;
+    left: 20vw;
+    font-size: 3vh;
+    width: 20vh;
+    height: 7vh;
+    border-radius: 1vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+
+.export:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
 .xbutton {
     color: #fcfcfc;
     font-family: bold 'Courier New', Courier, monospace;
@@ -187,6 +227,7 @@ body {
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .arrow:hover {
     transform: translateX(-10px);
 }
