@@ -68,8 +68,8 @@
                 let newNode = card.cloneNode(true);
                 table.appendChild(newNode);
                 let newScript = document.createElement("script");
-                newScript.src = "card.js";
                 newNode.appendChild(newScript);
+                newScript.src = "card.js";
                 counter++;
             }
         }
@@ -99,8 +99,9 @@
                             <li><button class="select1">Image Editor</button></li>
                             <li><button class="select2">Code Editor</button></li>
                         </ul>
-                    <div class="content"></div>
+                        <button class="xbutton" onclick="remove(this)">X</button>
                     </div>
+                    <div class="content"></div>
                 </td>
             </tr>
         </table>
