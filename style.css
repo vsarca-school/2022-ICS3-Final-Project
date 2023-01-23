@@ -3,16 +3,53 @@
     src: url(Fester_Trial-Book.woff);
 }
 
+.select1 {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    text-align: center;
+    font-size: 2vh;
+    width: 100%;
+    height: 5vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+    background-color: #2e6b9c;
+}
+
+.select2 {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    text-align: center;
+    font-size: 2vh;
+    width: 100%;
+    height: 5vh;
+    border: none;
+    border-radius: 0 0 1vh 1vh;
+    background-color: transparent;
+    transition-duration: 0.5s;
+    background-color: #2e6b9c;
+}
+
+.select1:hover, .select2:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
 
 .menu {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    font-size: 20px;
     position: relative;
     text-align: center;
-    width: 100%;
-    height: 60px;
+    width: 50%;
+    height: 30px;
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 10px;
+    margin: auto;
     background: red;
+    border-radius: 1vh;
+    transition-duration: 0.5s;
+    background-color: #2e6b9c;
 }
 
 .dropdown {
@@ -27,12 +64,16 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    border-radius: 0 0 1vh 1vh;
 }
 
 .menu:hover .dropdown {
     opacity: 1;
     transform: translateY(0px);
-    transition-delay: 0s, 0s, 0.3s;
+}
+
+.menu:hover {
+    border-radius: 1vw 1vw 0 0;
 }
 
 .dropdown li:hover{
@@ -93,21 +134,12 @@ body {
     background-color: #3c87c4;
     box-shadow: 0 0 10px #4ea6ee;
     transition-duration: 0.5s;
-
     margin-top: 12%;
 }
 
 .button:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
-}
-
-a {
-    text-decoration: none;
-    color: #fcfcfc;
-}
-a:onclick {
-    color: #fcfcfc;
 }
 
 .noMargin {
@@ -173,17 +205,6 @@ a:onclick {
     margin-left: 2vh;
 }
 
-.dropdown {
-    font-family: 'Fester';
-    background-color: #3c87c4;
-    box-shadow: 0 0 10px #4ea6ee;
-    border-radius: 1vw;
-    color: #fcfcfc;
-    font-size: 1vw;
-    padding: 1vw;
-    border: none;
-}
-
 .close {
     font-family: 'Fester';
     font-size: 1vw;
@@ -204,4 +225,9 @@ a:onclick {
 .close:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
+}
+
+.content {
+    text-align: center;
+    width: 100%;
 }
