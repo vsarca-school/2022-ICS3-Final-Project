@@ -5,6 +5,8 @@
     start.onclick = startButton;
     let clear = content.getElementsByClassName("clearButton")[0];
     clear.onclick = clearArea;
+    let accuracy = content.getElementsByClassName("accuracy")[0];
+    let cost = content.getElementsByClassName("cost")[0];
 
     let ctx = canvas.getContext("2d");
     let points = new Array();
@@ -62,6 +64,12 @@
         }, 2000);
         start.innerHTML = "Stop Graphing";
         start.onclick = stopButton;
+        dl.onEpoch = function (correct, total) {
+            accuracy.innerHTML = "The network got "+correct+"/"+total+" in the most recent epoch."
+        }
+        dl.onCost = function (cost) {
+            cost.innerHTML = "Cost: "+cost;
+        }
     }
     function stopButton() {
         clearInterval(timer);

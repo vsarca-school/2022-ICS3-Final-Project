@@ -1,4 +1,7 @@
-
+/* ********************************************************************************
+  These functions are used when running the network. Scroll down to the cost
+  and activation section to learn how to use them
+******************************************************************************** */
 function defaultCost(output, expected) {
     let error = output - expected;
     return error * error;
@@ -40,24 +43,108 @@ function SiLUDerivative(x) {
     return x * y * (1 - y) + y;
 }
 
-// System reqrite is needed in order to be able to use these
+// System rewrite is needed in order to be able to use these:
 // function Softmax(x)
 // function SoftmaxDerivative(x)
 
 /* ********************************************************************************
-    This class is responsible for storing the weights and biases of a neural network, 
-    as well as the gpu programs and other function needed to run the network and
-    evaluate it
-    Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+  This class is responsible for storing the weights and biases of a neural network, 
+  as well as the gpu programs and other function needed to run the network and
+  evaluate it
+  Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
 ******************************************************************************** */
 class NeuralNetwork {
     /* ********************************************************************************
-        This function explains the class so students can understand what it does
-        Example usage: NeuralNetwork.print();
+      This function explains the class so students can understand what it does
+      Example usage: NeuralNetwork.print();
     ******************************************************************************** */
     static print() { // Use console.log to print the contents of the class instead
-        console.log(`This is a placeholder description of the NeuralNetworks class
-I hope I remember to fill this in before we submit the final copy!`);                                                                                                 // TODO
+        console.log(`This is the NeuralNetwork class, which stores all the data necessary to run a Neural Network!
+Read the library to learn more about the inner workings of an AI!
+
+List of methods in NeuralNetwork:
+
+/* ********************************************************************************
+    These functions are used when running the network. Scroll down to the cost
+    and activation section to learn how to use them
+******************************************************************************** */
+function defaultCost(output, expected)
+function defaultCostDerivative(output, expected)
+function sigmoid(x)
+function sigmoidDerivative(x)
+function TanH(x)
+function TanHDerivative(x)
+function ReLU(x)
+function ReLUDerivative(x)
+function SiLU(x)
+function SiLUDerivative(x)
+
+/* ********************************************************************************
+    This constructor creates a neural network with undefined weights and biases
+    Example usage: let nn = new NeuralNetwork(784, 100, 10);
+******************************************************************************** */
+constructor(layer1, layer2, ...otherLayers)
+
+/* ********************************************************************************
+    This function will be called to create the gpu kernels once the user has changed the
+    activation/cost functions to their satisfaction
+    Example usage: let nn = new NeuralNetwork(784, 100, 10).generateGPU();
+******************************************************************************** */
+generateGPU()
+
+/* ********************************************************************************
+    This function will randomize all the weights in an existing network
+    Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+******************************************************************************** */
+randomize() 
+
+/* ********************************************************************************
+    This function will load a neural network from a save file
+    Example usage: let nn = new NeuralNetwork(784, 100, 10).fromFile("nn.txt");
+******************************************************************************** */
+fromFile(file)
+
+/* ********************************************************************************
+    This function will save a neural network to a save file
+    Example usage: nn.saveToFile("nn.txt");
+******************************************************************************** */
+saveToFile(filename)
+
+/* ********************************************************************************
+    The singleCost function calculates the cost of a single output of the network, can be set by user 
+    to functions other than the default value, user must include derivative so that the network is trainable
+    Both functions have 2 inputs and a return value
+    Example usage: nn.setCostFunction(myfunc, myinverse);
+******************************************************************************** */
+singleCost = [defaultCost, defaultCostDerivative];
+setCostFunction(normal, derivative)
+
+/* ********************************************************************************
+    This function calculates the total cost of the network's output, not for user
+    Example usage: N/A
+******************************************************************************** */
+averageCost(output, expected)
+
+/* ********************************************************************************
+    These functions run the network and return its final outputs
+    getNodeValues is used by the deep learner because it saves all intermittent values,
+    which are necessary for training
+    Example usage: N/A
+******************************************************************************** */
+runNetwork(data)
+getAllValues(data)
+
+/* ********************************************************************************
+    The activation function is applied to a node's input to find the nodes output, can be set by user 
+    to functions other than the default value, user must include derivative so that the network is trainable
+    Both functions have 1 input and a return value
+    The gpu really doesn't like it when your function creates a variable, so only math in there ok?
+    Example usage: nn.setActivationFunction(myfunc, myinverse);
+******************************************************************************** */
+activation = [sigmoid, sigmoidDerivative];
+setActivationFunction(normal, derivative)
+outputactivation = [sigmoid, sigmoidDerivative];
+setOutputActivationFunction(normal, derivative)`);
     }
 
     /* ********************************************************************************
@@ -164,7 +251,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
       This function will load a neural network from a save file
       Example usage: let nn = new NeuralNetwork(784, 100, 10).fromFile("nn.txt");
     ******************************************************************************** */
-    fromFile(file) {                                                                                                 // TODO actual ui maybe?
+    fromFile(file) {
         this.layersizes = file.layersizes;
         this.totallayers = this.layersizes.length - 1;
         this.layerweights = file.weights;
@@ -179,7 +266,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
       This function will save a neural network to a save file
       Example usage: nn.saveToFile("nn.txt");
     ******************************************************************************** */
-    saveToFile(filename) {                                                                                                 // TODO
+    saveToFile(filename) {
         let a = document.createElement("a");
         let file = new Blob([JSON.stringify({
             activation: [JSON.stringify(this.activation[0]), JSON.stringify(this.activation[1])], 
@@ -301,27 +388,82 @@ I hope I remember to fill this in before we submit the final copy!`);           
         this.activation = [normal, derivative];
         return this;
     }
-
-    //                                                                                                 // TODO: put more default activation function here like SiLu and ReLu, which are cool, but then we also need to have an output activation which im not willing to implement just yet
 }
 
 
 
 
 /* ********************************************************************************
-    This class is responsible for training the neural network it is assigned to
-    as well as the gpu programs and other function needed to run the network and
-    evaluate it
-    Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
+  This class is responsible for training the neural network it is assigned to
+  as well as the gpu programs and other function needed to run the network and
+  evaluate it
+  Example usage: let nn = new NeuralNetwork(784, 100, 10).randomize();
 ******************************************************************************** */
 class DeepLearner {
     /* ********************************************************************************
-        This function explains the class so students can understand what it does
-        Example usage: DeepLearner.print();
+      This function explains the class so students can understand what it does
+      Example usage: DeepLearner.print();
     ******************************************************************************** */
     static print() { // Use console.log to print the contents of the class instead
-        console.log(`This is a placeholder description of the DeepLearner class
-I hope I remember to fill this in before we submit the final copy!`);                                                                                                 // TODO
+        console.log(`This is the Deepleaner class, which is used to train a neural netowkr on some data!
+Read the library to learn more about the inner workings of an AI!
+
+List of methods in DeepLearner:
+
+/* ********************************************************************************
+    This function explains the class so students can understand what it does
+    Example usage: DeepLearner.print();
+******************************************************************************** */
+static print()
+
+/* ********************************************************************************
+    This constructor generates all the arrays and data required to be able to train
+    a given neural netowrk. The network cannot be changed after initialization
+    See defaultSettings for a list of possible settings, or read this messy constructor
+    Example usage: let dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
+******************************************************************************** */
+constructor(network, dataset, settings)
+
+/* ********************************************************************************
+    This object stores all the settings for the learner, which are explained in the object's comments
+    Example usage: let dl = new DeepLearner(nn, dataset, DeepLearner.defaultSettings);
+******************************************************************************** */
+static defaultSettings = {
+    learnrate: 0.1, // for gradient descent
+    batchsize: 100, // give it 100 samples at a time
+    batchsplit: 0.8, // 80% used, 20% saved for testing its learning on never before seen data
+    maxIncorrectGuessesToPrint: 1, // Print the first X incorrect guesses
+    regularization: 0.1, // Used for weight decay, too big and your network forgets what it learned
+    momentum: 0.9 // Weights remember how fast they were moving previously and accelerate down a slope, this is how much of the previous speed is retained (so 0.9 is losing 10% of the speed)
+}
+
+/* ********************************************************************************
+    This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
+    This function is here for training until done
+    Example usage: let trainer = dl.train(2000);
+******************************************************************************** */
+train(milliseconds)
+
+/* ********************************************************************************
+    This function will do one training iteration of the network, running this.batchsize
+    datapoints through the network and using the results to train the network
+    Example usage: dl.trainOnce();
+******************************************************************************** */
+trainOnce()
+
+/* ********************************************************************************
+    This function will clear the gradient arrays and then calculate and add the gradient for a lot of datapoints
+    Together with the gpu programs, this is half the magic of deep learning (the other half is actually using the gradients)
+    Example usage: N/A
+******************************************************************************** */
+updateGradients()
+
+/* ********************************************************************************
+    This function will use the gradients to train the network, using the gradient descent method
+    Using the gradients as a slope of a graph, our goal is to slide down the slope and find the lowest point on the graph
+    Example usage: N/A
+******************************************************************************** */
+applyGradients()`);
     }
 
     /* ********************************************************************************
@@ -342,6 +484,8 @@ I hope I remember to fill this in before we submit the final copy!`);           
         this.totalcorrect = 0; // To track total correct every epoch
         this.incorrectguessesprinted = 0; // Every epoch we print the first 10 mistakes
         this.epochscompleted = 0;
+        this.onEpoch = function () {};
+        this.onCost = function () {};
 
         // Settings
         if (!this.settings.hasOwnProperty("learnrate")) this.settings.learnrate = 0.1;
@@ -351,14 +495,10 @@ I hope I remember to fill this in before we submit the final copy!`);           
         if (!this.settings.hasOwnProperty("maxIncorrectGuessesToPrint")) this.settings.maxIncorrectGuessesToPrint = 10;
 
         // Fill the two sets using the batchsplit setting
-        for (let i = 0; i < this.trainamount; i++) {
-            this.trainingset[0].push(dataset[0][i]);                                                                    // TODO: there must be a more efficient way to split arrays
-            this.trainingset[1].push(dataset[1][i]);
-        }
-        for (let i = Math.ceil(this.trainamount); i < this.totaldata; i++) {
-            this.testingset[0].push(dataset[0][i]);
-            this.testingset[1].push(dataset[1][i]);
-        }
+        this.trainingset[0] = dataset[0].slice(0, this.trainamount);
+        this.trainingset[1] = dataset[1].slice(0, this.trainamount);
+        this.testingset[0] = dataset[0].slice(this.trainamount, this.dataset[0].length);
+        this.testingset[1] = dataset[1].slice(this.trainamount, this.dataset[1].length);
 
         // Weight gradients and velocities
         this.wgradients = Array(this.network.layerweights.length);
@@ -387,16 +527,18 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     static defaultSettings = {
         learnrate: 0.1, // for gradient descent
-        batchsize: 100, // give it 100 samples at a time                                                                                                 // TODO: Make these comments
+        batchsize: 100, // give it 100 samples at a time
         batchsplit: 0.8, // 80% used, 20% saved for testing its learning on never before seen data
         maxIncorrectGuessesToPrint: 1, // Print the first X incorrect guesses
         regularization: 0.1, // Used for weight decay, too big and your network forgets what it learned
         momentum: 0.9 // Weights remember how fast they were moving previously and accelerate down a slope, this is how much of the previous speed is retained (so 0.9 is losing 10% of the speed)
     }
 
-    /*                                                                                                                          TODO: write this
-    */
-    test() {
+    /* ********************************************************************************
+      This function will run all the testing data through the network and return the networks performance
+      Example usage: N/A (deprecated)
+    ******************************************************************************** */
+    /*test() {
         let totalcorrect = 0;
         let totalwrong = 0;
         for (let i = 0; i < this.testingset[0].length; i++) {
@@ -410,7 +552,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             else totalwrong++;
         }
         return "The network gets " + totalcorrect + "/" + this.testingset[0].length + " on testing data";
-    }
+    }*/
 
     /* ********************************************************************************
       This function creates an interval which will call trainOnce at a user defined frequency (in milliseconds)
@@ -419,21 +561,20 @@ I hope I remember to fill this in before we submit the final copy!`);           
     ******************************************************************************** */
     train(milliseconds) {
         // Loop
-        let trainer = setInterval(this.trainOnce.bind(this), milliseconds);                                                                                                 // TODO: store this in the function to automatically turn off when fully trained maybe? maybe its a setting
+        let trainer = setInterval(this.trainOnce.bind(this), milliseconds);
         return trainer; // In case the user wants to edit this interval
     }
 
     /* ********************************************************************************
-      Most things below this point are untested                                                                                               // TODO: Finish everything below this point, it really doesnt do much yet, and I have no idea how im going to do this yet
+      This function will do one training iteration of the network, running this.batchsize
+      datapoints through the network and using the results to train the network
+      Example usage: dl.trainOnce();
     ******************************************************************************** */
-
-
     trainOnce() {
         // Get the average gradient of all data points
         this.updateGradients();
         this.applyGradients();
     }
-
 
     /* ********************************************************************************
       This function will clear the gradient arrays and then calculate and add the gradient for a lot of datapoints
@@ -502,13 +643,14 @@ I hope I remember to fill this in before we submit the final copy!`);           
             if (this.debugnow) {
                 console.log("Gradients are w", this.wgradients, "b", this.bgradients);
                 console.log("Weights are w", this.network.layerweights, "b", this.network.layerbiases);
-                console.log("Fuck it, heres the layerdata", layerdata);
+                console.log("Heres the layerdata", layerdata);
             }
 
             // Increment the index
             this.batchindex++;
             if (this.batchindex == this.trainingset[0].length) {
                 this.epochscompleted++;
+                this.onEpoch(this.totalcorrect, this.trainingset[0].length);
                 console.log("Epoch", this.epochscompleted, "complete, network guessed", this.totalcorrect, "/", this.trainingset[0].length, "correct");
                 this.batchindex = 0;
                 this.totalcorrect = 0;
@@ -516,6 +658,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
             }
         }
 
+        this.onCost(cost / this.settings.batchsize);
         console.log("Average cost on data is", cost / this.settings.batchsize);
     }
 
@@ -524,7 +667,7 @@ I hope I remember to fill this in before we submit the final copy!`);           
       Using the gradients as a slope of a graph, our goal is to slide down the slope and find the lowest point on the graph
       Example usage: N/A
     ******************************************************************************** */
-    applyGradients() {                                                                                                                              // TODO: this method screws up the weights because the gradients are screwed up
+    applyGradients() {
         // We use a little trick here, instead of taking the average of our gradients we use the sum and instead divide our learn rate
         let learnrate = this.settings.learnrate / this.trainamount;
         let weightDecay = (1 - this.settings.regularization * learnrate);
