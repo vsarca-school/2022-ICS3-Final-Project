@@ -21,7 +21,9 @@
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:"<>?';
         var charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        for (i = 0; i < length/10; i++) {
+            result += (Math.random() + 1).toString(36).substring(2);
+        }
         return result;
     }
     let counter = 0;
