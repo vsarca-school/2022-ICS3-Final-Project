@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <link rel="stylesheet" href="style.css">
-
+<link rel="icon" href="image.ico">
 <head>
     <title>LearnAI.js</title>
     <canvas id="canvasId" oncontextmenu="return false;"></canvas>
@@ -48,6 +48,7 @@
             }
             
             ctx.fillStyle = "rgba(125, 157, 223, 0.25)";
+            // Randomized background text
             for (let i = 0; i < canvas.height*2; i += 16) ctx.fillText(textarr[i/16], 0, 10 + i);
 
             ctx.fill();

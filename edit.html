@@ -3,6 +3,7 @@
 
 <head>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="image.ico">
     <title>LearnAI.js - Editor</title>
     <meta charset="utf-8">
     <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
@@ -63,6 +64,7 @@
         }
 
         function plusButton() {
+            // Limit number of tabs to 3
             if (counter < 3) {
                 let newNode = card.cloneNode(true);
                 table.appendChild(newNode);
@@ -78,6 +80,7 @@
             counter--;
         }
 
+        // Change text on class "menu"
         function changeText(el) {
             el.parentElement.parentElement.parentElement.firstChild.textContent = el.textContent;
         }
@@ -118,21 +121,21 @@
 
         <!-- Graph displaying network accuracy -->
         <div class="content editor-div" id="Graph">
+            <p class="info-test accuracy"></p>
+            <p class="info-test cost"></p>
             <canvas class="editor-canvas" width="560" height="560"></canvas><br>
             <!--input type="text" name="number" id="num"><br>                 These are just for testing right? we dont want to graph user values
             <button class="smallButton" onclick="javascript:addPoint();">Submit</button-->
             <button class="smallButton startButton">Start Graphing</button>
             <button class="smallButton clearButton">Clear Area</button>
-            <p class="info-test accuracy"></p>
-            <p class="info-test cost"></p>
         </div>
 
         <!-- Image Editor, submission to network for evaluation -->
         <div class="content editor-div" id="Image Editor">
+            <p class="info-test guess"></p>
             <canvas class="editor-canvas" width="560" height="560"></canvas><br>
             <button class="smallButton submitButton">Submit</button>
             <button class="smallButton clearButton">Clear Area</button>
-            <p class="info-test guess"></p>
         </div>
 
         <!-- Code Editor -->

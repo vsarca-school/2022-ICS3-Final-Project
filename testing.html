@@ -105,6 +105,11 @@
             console.log("Network got", totalcorrect, "correct and", totalwrong, "wrong");
         }
 
+        nn = new NeuralNetwork(784, 300, 10).randomize().setActivationFunction(ReLU, ReLUDerivative).generateGPU();
+        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.9, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
+
+        dl.train(600);
+
         //NeuralNetwork.print();
 
         //nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();

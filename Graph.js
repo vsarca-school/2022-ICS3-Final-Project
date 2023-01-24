@@ -23,16 +23,16 @@
             ctx.stroke();
         }
         else {
-            /* for (let i = 0; i < points.length; i++) {
-                let x = canvas.width / (points.length - 1) * i;
-                let y = (canvas.height * (1 - points[i]));
-                ctx.beginPath();
-                ctx.arc(x, y, 2, 0, 2 * Math.PI);
-                ctx.fillStyle = "#7D9DDF";
-                ctx.fill();
-                ctx.strokeStyle = "#7D9DDF";
-                ctx.stroke();
-            }*/
+            // for (let i = 0; i < points.length; i++) {
+            //     let x = canvas.width / (points.length - 1) * i;
+            //     let y = (canvas.height * (1 - points[i]));
+            //     ctx.beginPath();
+            //     ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
+            //     ctx.fillStyle = "#7D9DDF";
+            //     ctx.fill();
+            //     ctx.strokeStyle = "#7D9DDF";
+            //     ctx.stroke();
+            // }
             ctx.beginPath();
             for (let i = 0; i < points.length; i++) {
                 let x = canvas.width / (points.length - 1) * i;
@@ -65,7 +65,7 @@
         start.innerHTML = "Stop Graphing";
         start.onclick = stopButton;
         dl.onEpoch = function (correct, total) {
-            accuracy.innerHTML = "The network got "+correct+"/"+total+" in the most recent epoch."
+            accuracy.innerHTML = "The network got "+correct+" out of "+total+" in the most recent epoch."
         }
         dl.onCost = function (value) {
             cost.innerHTML = "Cost: "+value;
