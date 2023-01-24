@@ -64,6 +64,7 @@
         }
 
         function plusButton() {
+            // Limit number of tabs to 3
             if (counter < 3) {
                 let newNode = card.cloneNode(true);
                 table.appendChild(newNode);
@@ -79,6 +80,7 @@
             counter--;
         }
 
+        // Change text on class "menu"
         function changeText(el) {
             el.parentElement.parentElement.parentElement.firstChild.textContent = el.textContent;
         }
