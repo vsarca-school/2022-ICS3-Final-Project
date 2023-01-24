@@ -65,7 +65,7 @@
         start.innerHTML = "Stop Graphing";
         start.onclick = stopButton;
         dl.onEpoch = function (correct, total) {
-            accuracy.innerHTML = "The network got "+correct+" out of"+total+" in the most recent epoch."
+            accuracy.innerHTML = "The network got "+correct+" out of "+total+" in the most recent epoch."
         }
         dl.onCost = function (value) {
             cost.innerHTML = "Cost: "+value;
