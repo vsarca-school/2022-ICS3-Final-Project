@@ -1,18 +1,45 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="image.ico">
+
 <head>
+    <link rel="stylesheet" href="style.css">
     <title>LearnAI.js - Editor</title>
+    <meta charset="utf-8">
+    <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
+    <script src="LearnAI.js"></script>
+    <script src="mnist_784_json - 30k.json"></script>
+    <script>
+        // Only the MNIST handwritten digits database is available for now in the editor
+        // Downloaded from https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
+        // Not uploading a gigbyte to github, so its only 1k out of the 70k digits
+        let MNIST_DATABASE = [[], []];
+        for (let i = 0; i < 30000; i++) {
+            // answer
+            MNIST_DATABASE[1].push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            MNIST_DATABASE[1][i][data[i].class] = 1;
+
+            // image
+            MNIST_DATABASE[0].push([]);
+            for (let j = 1; j <= 784; j++) {
+                MNIST_DATABASE[0][i].push(data[i]["pixel" + j.toString()] / 255);
+            }
+        }
+
+        var nn = new NeuralNetwork(1, 1);
+        var dl;
+        var trainer;
+    </script>
 </head>
+
 <body class="noMargin">
     <script>
         var card;
         var table;
 
-        var empty;
-        var image_editor;
-        var code_editor;
+        var card_types = [];
+        var card_scripts = ["Graph.js", "Image Editor.js", "Code Editor.js"];
+
+        let counter = 0;
         document.body.onload = function (event) {
             let temp = document.getElementById("card");
             card = temp.cloneNode(true);
@@ -21,57 +48,107 @@
 
             table = document.getElementById("card-holder");
 
-            temp = document.getElementById("empty");
-            empty = temp.cloneNode(true);
-            empty.removeAttribute("id");
+            temp = document.getElementById("Graph");
+            card_types[0] = temp.cloneNode(true);
+            card_types[0].removeAttribute("id");
             temp.remove();
             temp = document.getElementById("Image Editor");
-            image_editor= temp.cloneNode(true);
-            image_editor.removeAttribute("id"); 
+            card_types[1] = temp.cloneNode(true);
+            card_types[1].removeAttribute("id");
             temp.remove();
             temp = document.getElementById("Code Editor");
-            code_editor= temp.cloneNode(true);
-            code_editor.removeAttribute("id"); 
+            card_types[2] = temp.cloneNode(true);
+            card_types[2].removeAttribute("id");
             temp.remove();
         }
 
         function plusButton() {
-            let newNode = card.cloneNode(true);
-            table.appendChild(newNode);
-            let newScript = document.createElement("script");
-            newScript.src = "card.js";
-            newNode.appendChild(newScript);
+            if (counter < 3) {
+                let newNode = card.cloneNode(true);
+                table.appendChild(newNode);
+                let newScript = document.createElement("script");
+                newNode.appendChild(newScript);
+                newScript.src = "card.js";
+                counter++;
+            }
         }
 
         function remove(el) {
-            el.parentElement.parentElement.remove();
+            el.parentElement.remove();
+            counter--;
+        }
+
+        function changeText(el) {
+            el.parentElement.parentElement.parentElement.firstChild.textContent = el.textContent;
+        }
+
+        let input = document.createElement("input");
+        input.type = "file";
+        input.onchange = function (e) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                nn = new NeuralNetwork(1, 1).fromFile(JSON.parse(reader.result));
+            }
+            reader.readAsText(input.files[0]);
         }
     </script>
 
     <div class="topBar">
         <a href="index.html"><button class="arrow"><<</button></a>
         <button class="plus" onclick="plusButton()">+</button>
+        <button class="import" onclick="input.click()">Import Network</button>
+        <button class="export" onclick="nn.saveToFile('network.txt')">Export Network</button>
     </div>
     <div>
         <table class="fullscreen">
             <tr class="fullscreen" id="card-holder">
                 <td id="card" class="fullscreen row">
-                    <div class="selection drop-div">
-                        <select style="width: 20%;" class="selection">
-                            <option value="empty"></option>
-                            <option value="Image Editor">Image Editor</option>
-                            <option value="Code Editor">Code Editor</option>
-                        </select>
-                        <button style="width: 5%; margin-right: 5%;" onclick="remove(this)">X</button>
+                    <button class="xbutton" onclick="remove(this)">x</button>
+                    <div class="menu"> Select an option
+                        <ul class="dropdown">
+                            <li><button onclick="changeText(this)" class="select1">Graph</button></li>
+                            <li><button onclick="changeText(this)" class="select2">Image Editor</button></li>
+                            <li><button onclick="changeText(this)" class="select3">Code Editor</button></li>
+                        </ul>
                     </div>
                     <div class="content"></div>
                 </td>
             </tr>
         </table>
 
-        <div class="content" id="empty"></div>
-        <div class="content" id="Image Editor">Image Editor</div>
-        <div class="content" id="Code Editor">Code Editor</div>
+        <!-- Graph displaying network accuracy -->
+        <div class="content editor-div" id="Graph">
+            <canvas class="editor-canvas" width="560" height="560"></canvas><br>
+            <!--input type="text" name="number" id="num"><br>                 These are just for testing right? we dont want to graph user values
+            <button class="smallButton" onclick="javascript:addPoint();">Submit</button-->
+            <button class="smallButton startButton">Start Graphing</button>
+            <button class="smallButton clearButton">Clear Area</button>
+            <p class="info-test accuracy"></p>
+            <p class="info-test cost"></p>
+        </div>
+
+        <!-- Image Editor, submission to network for evaluation -->
+        <div class="content editor-div" id="Image Editor">
+            <canvas class="editor-canvas" width="560" height="560"></canvas><br>
+            <button class="smallButton submitButton">Submit</button>
+            <button class="smallButton clearButton">Clear Area</button>
+            <p class="info-test guess"></p>
+        </div>
+
+        <!-- Code Editor -->
+        <div class="content" id="Code Editor">
+            <textarea spellcheck="false" style="resize: none; margin: 0 5%; width: 90%;">// Each class has a method that explains what it does in the console; check it out!
+NeuralNetwork.print();
+DeepLearner.print();
+
+// There are 4 global variables that can be accessed and set by a script in this box: MNIST_DATABASE, nn, dl, and trainer. The database should not be edited.
+nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
+dl = new DeepLearner(nn, MNIST_DATABASE, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
+
+trainer = dl.train(2000);</textarea>
+            <button class="smallButton">Run</button>
+        </div>
     </div>
 </body>
+
 </html>

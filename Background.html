@@ -16,13 +16,14 @@
     function graph(n) {
         return 50*(Math.E**(-0.004*(n-canvas.width/3)))*Math.sin(((n-canvas.width/3)-h)/a);
     }
-    
 
     function strGenerate(length) {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:"<>?';
         var charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        for (i = 0; i < length/10; i++) {
+            result += (Math.random() + 1).toString(36).substring(2);
+        }
         return result;
     }
     let counter = 0;
@@ -35,7 +36,8 @@
                 textarr[i] = strGenerate(canvas.height/5);
             }
         }
-        ctx.clearRect(0, 0, canvas.width,canvas.height);
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width,canvas.height);
         ctx.fillStyle = "#7D9DDF";
         for (let i = 0; i < canvas.width/10; i++) {
             for (let j = 0; j < textarr[0].length; j++) {

@@ -1,0 +1,73 @@
+<html>
+
+<body>
+    <style>
+        #canvas1_div {
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+    <div id="canvas1_div" style="overflow-x: auto;">
+        <canvas id="canvas1" width="560" height="560"></canvas><br>
+        <input type="text" name="number" id="num"><br>
+        <button onclick="javascript:addPoint();">Submit</button>
+        <button onclick="javascript:clearArea();points.length = 0;">Clear Area</button>
+    </div>
+
+    <script>
+        let canvas1 = document.getElementById("canvas1");
+        let ctx1 = canvas1.getContext("2d");
+        let points = new Array();
+
+        function addPoint() {
+            clearArea();
+            let val = document.getElementById("num").value;
+            points.push(val);
+            console.log(points.length);
+            if (points.length === 1) {
+                ctx1.beginPath();
+                ctx1.arc(0, (canvas1.height * (1 - val)), 2, 0, 2 * Math.PI);
+                ctx1.fillStyle = "#7D9DDF";
+                ctx1.fill();
+                ctx1.strokeStyle = "#7D9DDF";
+                ctx1.stroke();
+            }
+            else {
+                for (let i = 0; i < points.length; i++) {
+                    let x = canvas1.width / (points.length - 1) * i;
+                    let y = (canvas1.height * (1 - points[i]));
+                    ctx1.beginPath();
+                    ctx1.arc(x, y, 2, 0, 2 * Math.PI);
+                    ctx1.fillStyle = "#7D9DDF";
+                    ctx1.fill();
+                    ctx1.strokeStyle = "#7D9DDF";
+                    ctx1.stroke();
+                }
+                ctx1.beginPath();
+                for (let i = 0; i < points.length; i++) {
+                    let x = canvas1.width / (points.length - 1) * i;
+                    let y = (canvas1.height * (1 - points[i]));
+                    if (i === 0) {
+                        ctx1.moveTo(x, y);
+                    } else {
+                        ctx1.lineTo(x, y);
+                    }
+                }
+                ctx1.strokeStyle = "#7D9DDF";
+                ctx1.stroke();
+            }
+
+
+        }
+
+        function clearArea() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+    </script>
+</body>
+
+</html>

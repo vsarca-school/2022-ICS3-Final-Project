@@ -3,6 +3,157 @@
     src: url(Fester_Trial-Book.woff);
 }
 
+.select1 {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    text-align: center;
+    font-size: 2vh;
+    width: 100%;
+    height: 5vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+    background-color: #3c87c4;
+}
+
+.select2 {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    text-align: center;
+    font-size: 2vh;
+    width: 100%;
+    height: 5vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+    background-color: #3c87c4;
+}
+
+.select3 {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    text-align: center;
+    font-size: 2vh;
+    width: 100%;
+    height: 5vh;
+    border: none;
+    border-radius: 0 0 1vh 1vh;
+    background-color: transparent;
+    transition-duration: 0.5s;
+    background-color: #3c87c4;
+}
+
+.select1:hover .select2:hover .select3:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+.import {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    position: absolute;
+    text-align: center;
+    left: 9vw;
+    font-size: 3vh;
+    width: 20vh;
+    height: 7vh;
+    border-radius: 1vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+
+.export {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    position: absolute;
+    text-align: center;
+    left: 20vw;
+    font-size: 3vh;
+    width: 20vh;
+    height: 7vh;
+    border-radius: 1vh;
+    border: none;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+
+.import:hover,
+.export:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+.xbutton {
+    color: #fcfcfc;
+    font-family: bold 'Courier New', Courier, monospace;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+    font-size: 5vh;
+    font-stretch: ultra-condensed;
+    width: 7vh;
+    height: 7vh;
+    border: none;
+    border-radius: 1vh;
+    background-color: transparent;
+    transition-duration: 0.5s;
+}
+
+.xbutton:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+.menu {
+    color: #fcfcfc;
+    font-family: 'Fester';
+    font-weight: bolder;
+    font-size: 15px;
+    position: relative;
+    text-align: center;
+    width: 50%;
+    height: 30px;
+    list-style: none;
+    padding: 10px;
+    margin: auto;
+    border-radius: 1vh;
+    transition-duration: 0.5s;
+    background-color: #3c87c4;
+}
+
+.dropdown {
+    transform-origin: top;
+    transform: translateY(-10px);
+    transform: scaleY(0);
+    background-color: #3c87c4;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    transition-duration: 0.5s;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 0 1vh 1vh;
+}
+
+.menu:hover .dropdown {
+    opacity: 1;
+    transform: translateY(0px);
+    transform: scaleY(1);
+}
+
+.menu:hover {
+    border-radius: 1vw 1vw 0 0;
+}
+
+body {
+    overflow: hidden;
+}
+
 .background {
     background-color: #09073a;
     color: #fcfcfc;
@@ -53,7 +204,6 @@
     background-color: #3c87c4;
     box-shadow: 0 0 10px #4ea6ee;
     transition-duration: 0.5s;
-
     margin-top: 12%;
 }
 
@@ -62,15 +212,8 @@
     box-shadow: 0 0 20px #70e2ff;
 }
 
-a {
-    text-decoration: none;
-    color: #fcfcfc;
-}
-a:onclick {
-    color: #fcfcfc;
-}
-
 .noMargin {
+    background-color: #09073a;
     margin-top: 0;
     margin-left: 0;
     margin-bottom: 0;
@@ -96,6 +239,7 @@ a:onclick {
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .arrow:hover {
     transform: translateX(-10px);
 }
@@ -114,6 +258,7 @@ a:onclick {
     background-color: transparent;
     transition-duration: 0.5s;
 }
+
 .plus:hover {
     background-color: #4ebeda;
     box-shadow: 0 0 20px #70e2ff;
@@ -123,13 +268,76 @@ a:onclick {
     width: 100vw;
 }
 
-.drop-div {
-    text-align: center;
+.row {
+    position: relative;
+    height: 93vh;
+    background-color: #262d63;
 }
 
-.row {
-    height: 91.8vh;
-    background-color: #262d63;
-    box-shadow: 0 0 20px #ecdf1f;
-    border-radius: 2vh;
+.drop-div {
+    margin-top: -44.5vh;
+    margin-left: 2vh;
+}
+
+.close {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    border: none;
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 1vw;
+    color: #fcfcfc;
+    background-color: #3c87c4;
+    box-shadow: 0 0 10px #4ea6ee;
+    transition-duration: 0.5s;
+
+    margin-left: 1vw;
+}
+
+.close:hover {
+    background-color: #4ebeda;
+    box-shadow: 0 0 20px #70e2ff;
+}
+
+.content {
+    text-align: center;
+    width: 100%;
+    padding-top: 3%;
+}
+
+.smallButton {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    border: none;
+    border-radius: 0.5vw;
+    color: #fcfcfc;
+    background-color: #3c87c4;
+    transition-duration: 0.5s;
+}
+
+.smallButton:hover {
+    background-color: #4ebeda;
+}
+
+.editor-div {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.editor-canvas {
+    border: 2px solid black;
+}
+
+.info-test {
+    font-family: 'Fester';
+    font-size: 1vw;
+    font-weight: bolder;
+    text-align: center;
+    color: #fcfcfc;
 }

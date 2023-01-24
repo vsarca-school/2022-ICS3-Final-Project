@@ -5,51 +5,17 @@
     <link rel="stylesheet" href="style.css">
     <title>ICS Final Project</title>
     <script src="gpu.js/dist/gpu-browser.min.js"> // Libary for fast computation </script>
-    <script>
-        // GPU is a constructor and namespace for browser
-        /*
-        const generateMatrices = () => {
-            const matrices = [[], []]
-            for (let y = 0; y < 512; y++){
-            matrices[0].push([])
-            matrices[1].push([])
-            for (let x = 0; x < 512; x++){
-                matrices[0][y].push(Math.random())
-                matrices[1][y].push(Math.random())
-            }
-            }
-            return matrices
-        }
-
-        
-        class thing {
-            constructor() {
-                this.gpu = new GPU();
-                this.multiplyMatrix = [];
-                for (let i=0; i<10; i++)
-                {
-                    this.multiplyMatrix.push(eval(`this.gpu.createKernel(function(a,b) {
-                        return a[this.thread.x]*b[this.thread.x];
-                    }).setOutput([10])`));
-                }
-                console.log(this.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]));
-            }
-        }
-
-        t = new thing();
-        const matrices = generateMatrices();
-        const out = t.multiplyMatrix[0]([0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]);
-        console.log(out); //*/
-    </script>
-
     <script src="LearnAI.js"></script>
-    <script src="mnist_784_json - 10k.json"></script>
+    <script src="mnist_784_json - 30k.json"></script>
     <!--script src="C:\Users\vsarca\Downloads\Neural-Network-Experiments-2e28014ede7ae696cdccba2783a40352200ac14b\Neural-Network-Experiments-2e28014ede7ae696cdccba2783a40352200ac14b\Assets\Data\Mnist\Trained Networks\Mnist Net.json"></script-->
+</head>
+
+<body>
     <script>
         // We will eventually get our digits from here: https://pkgstore.datahub.io/machine-learning/mnist_784/mnist_784_json/data/617bd9fcff01b7d3621d67cef6405d12/mnist_784_json.json
 
         let dataset=[[], []];
-        for (let i=0; i<10000; i++)
+        for (let i=0; i<30000; i++)
         {
             // answer
             dataset[1].push([0,0,0,0,0,0,0,0,0,0]);
@@ -64,8 +30,7 @@
         }
 
         // For rendering our dataset in the console
-        let imagenumber = 0;
-        function drawImage() {
+        function drawImage(imagenumber) {
             let image = "";
             for (let i=0; i<28; i++)
             {
@@ -88,31 +53,86 @@
                 image += "\n";
             }
             console.log(image, "Answer is", data[imagenumber].class);
-            imagenumber++;
+        }
+
+        let nn, dl;
+        let input = document.createElement("input");
+        input.type = "file";
+        document.body.onload = function () {
+            let a = document.getElementById("a");
+            a.onclick = function(e) {
+                e.preventDefault();
+                input.click();
+            };
+            input.onchange = function(e) {
+                let reader = new FileReader();
+                reader.onload = function () {
+                    nn = new NeuralNetwork(1, 1).fromFile(JSON.parse(reader.result)).generateGPU();
+                    dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.9, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
+
+                }
+                reader.readAsText(input.files[0]);
+            }
+        }
+
+        function testOnTrainingData()
+        {
+            let totalcorrect = 0;
+            let totalwrong = 0;
+            for (let i=27000; i<dataset[0].length; i++)
+            {
+                let output = nn.runNetwork(dataset[0][i]);
+                let cost = nn.averageCost(output, dataset[1][i]);
+                let largest = 0;
+                for (let j = 1; j < output.length; j++) {
+                    if (output[j] > output[largest])
+                        largest = j;
+                }
+                if (dataset[1][i][largest] == 1) totalcorrect++;
+                else {
+                    totalwrong++;
+                    if (totalwrong > 1500)
+                    {
+                        console.log("", totalwrong, "Network got case", i+1, "wrong, it guessed", largest, "for");
+                        drawImage(i);
+                    }
+                    else
+                    {
+                        console.log(totalwrong);
+                    }
+                }
+            }
+            console.log("Network got", totalcorrect, "correct and", totalwrong, "wrong");
         }
 
         //NeuralNetwork.print();
 
-        nn = new NeuralNetwork(784, 10).randomize().generateGPU();
+        //nn = new NeuralNetwork(784, 100, 10).randomize().generateGPU();
+        //nn = new NeuralNetwork(784, 100, 10).fromFile().generateGPU();
 
-        console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
+        //console.log(nn.runNetwork(dataset[0][0]), "is the result for", dataset[0][0]);
         
         //DeepLearner.print();
 
-        dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.8, maxIncorrectGuessesToPrint: 1 });
-        
+        //dl = new DeepLearner(nn, dataset, { learnrate: 1, batchsize: 100, batchsplit: 0.9, maxIncorrectGuessesToPrint: 1, regularization: 0.0001, momentum: 0.9 });
+        //dl.debug = true;
+
         //console.log("Network gets", dl.countAll(), "/ 1000 test cases correct");
-        let trainer = dl.train(800);
-        setTimeout(function () { clearInterval(trainer); dl.test(); }, 300000);
+        //let trainer = dl.train(600);
+        //setTimeout(function () { clearInterval(trainer); dl.test(); }, 900000);
+        //let p;
+        //document.body.onload = function () { p = document.getElementById("p"); }
+        /*let tester = setInterval(function () {
+            p.innerHTML = dl.test();
+            console.log(p.innerHTML);
+        }, 60000);*/
         //let tester = setInterval(function () { console.log("Network gets", dl.countAll(), "/ 1000 test cases correct"); }, 10000);
         //let printer = setInterval(function () { console.log("Weights:", nn.layerweights, ", Biases:", nn.layerbiases); }, 10000);
         //dl.trainOnce();
         //dl.trainOnce();
         //dl.trainOnce();
     </script>
-</head>
-
-<body>
-    <p>This is our ICS final project!</p>
+    <p id="p">This is our ICS final project!</p>
+    <a id="a" style="color: black;" href="#">Click to upload a neural network</a>
 </body>
 </html>
