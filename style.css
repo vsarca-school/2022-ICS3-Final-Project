@@ -51,9 +51,8 @@
 .import {
     color: #fcfcfc;
     font-family: bold 'Courier New', Courier, monospace;
-    position: absolute;
     text-align: center;
-    left: 12vw;
+    float: right;
     font-size: 3vh;
     width: 10vw;
     height: 7vh;
@@ -66,9 +65,8 @@
 .export {
     color: #fcfcfc;
     font-family: bold 'Courier New', Courier, monospace;
-    position: absolute;
     text-align: center;
-    left: 22.5vw;
+    float: right;
     font-size: 3vh;
     width: 10vw;
     height: 7vh;
